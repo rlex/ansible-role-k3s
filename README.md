@@ -22,7 +22,7 @@ Tested on ubuntu 20.04 but should work on any relatively new OS.
 | k3s_node                   | `false`        | installs k3s node when true                                                                                                          |
 | k3s_master_ip              | see below      | victoriametrics system user                                                                                                          |
 | k3s_server_flannel_backend | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
-| k3s_server_disable         | `[]]`          | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
+| k3s_server_disable         | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
 | k3s_server_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
 | k3s_agent_extra_args       | ``             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
 | k3s_bpffs                  | `false`        | mounts /sys/fs/bpf bpffs (needed by cilium)                                                                                          |
