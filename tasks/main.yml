@@ -1,0 +1,6 @@
+- import_tasks: preconf.yml
+- import_tasks: install.yml
+- import_tasks: master.yml
+  when: k3s_master and k3s_master is defined
+- import_tasks: node.yml
+  when: k3s_node and k3s_node is defined

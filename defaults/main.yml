@@ -1,0 +1,11 @@
+---
+k3s_version: v1.18.2+k3s1
+k3s_systemd_dir: /etc/systemd/system
+k3s_master_ip: "{{ hostvars[groups['k3s_master'][0]]['ansible_host'] | default(groups['k3s_master'][0]) }}"
+#ie: --flannel-backend=none --no-flannel --disable traefik
+k3s_server_flannel_backend: vxlan
+k3s_server_disable: []
+k3s_extra_server_args: ""
+k3s_master: false
+k3s_node: false
+k3s_bpffs: false

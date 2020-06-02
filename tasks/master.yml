@@ -1,0 +1,48 @@
+---
+- name: Copy k3s service file
+  register: k3s_service
+  template:
+    src: "k3s.service.j2"
+    dest: "{{ k3s_systemd_dir }}/k3s.service"
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart k3s
+
+- name: Enable k3s
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: started
+    enabled: yes
+
+- name: Wait for node-token
+  wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+
+- name: Read node-token from master
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token
+
+- name: Store Master node-token
+  set_fact:
+    k3s_node_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+
+- name: Create directory .kube
+  file:
+    path: ~{{ ansible_user }}/.kube
+    state: directory
+    owner: "{{ ansible_user }}"
+
+- name: Create kubectl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/kubectl
+    state: link
+
+- name: Create crictl symlink
+  file:
+    src: /usr/local/bin/k3s
+    dest: /usr/local/bin/crictl
+    state: link
