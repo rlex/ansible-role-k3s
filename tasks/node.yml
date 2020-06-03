@@ -7,7 +7,7 @@
     owner: root
     group: root
     mode: 0755
-  notify: restart ks3-agent
+  notify: restart k3s-agent
 
 - name: enable k3s-agent
   systemd:
