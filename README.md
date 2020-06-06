@@ -26,7 +26,8 @@ Tested on ubuntu 20.04 but should work on any relatively new OS.
 | k3s_server_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
 | k3s_agent_extra_args       | ``             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
 | k3s_bpffs                  | `false`        | mounts /sys/fs/bpf bpffs (needed by cilium)                                                                                          |
-
+| k3s_node_external_ip       | ``             | specifies k3s external ip                                                                                                            |
+| k3s_node_ip                | ``             | specifies k3s node ip                                                                                                                |
 ### Usage
 
 Your inventory should have k3s_master group (will probably remove that requirement later):
@@ -55,6 +56,18 @@ On k3s_node, just
 ```yaml
 k3s_node: true
 ```
-Is enough
+Is usually enough
 
 By default master_ip will be ansible_host from node in k3s_master group. In some cases you might want to redefine it (internal network, VPN network, etc)
+
+### k3s node and external ip
+Sometimes k3s fails to properly detect external and internal ip. For those, use this variables:
+```
+k3s_node_external_ip
+k3s_node_ip
+```
+Ie:
+```
+k3s_node_external_ip: "{{ ansible_default_ipv4['address'] }}"
+k3s_node_ip: "{{ ansible_yggdrasil0.ipv4.address }}"
+```

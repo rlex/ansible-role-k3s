@@ -10,3 +10,5 @@ k3s_agent_extra_args: ""
 k3s_master: false
 k3s_node: false
 k3s_bpffs: false
+k3s_node_external_ip: ""
+k3s_node_ip: ""
