@@ -5,6 +5,7 @@ After=network-online.target
 
 [Service]
 Type=notify
+Environment=K3S_TOKEN={{ hostvars[groups['k3s_master'][0]]['k3s_node_token'] }}
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s agent \
@@ -14,7 +15,6 @@ ExecStart=/usr/local/bin/k3s agent \
 {% if k3s_node_ip | length > 0 %}
   --node-ip={{ k3s_node_ip }} \
 {% endif %}
-  --token {{ hostvars[groups['k3s_master'][0]]['k3s_node_token'] }} \
   --server https://{{ k3s_master_ip }}:6443 {{ k3s_agent_extra_args | default("") }}
 
 KillMode=process
