@@ -4,5 +4,3 @@
   when: k3s_master and k3s_master is defined
 - import_tasks: node.yml
   when: k3s_node and k3s_node is defined
-- import_tasks: ufw.yml
-  when: k3s_ufw and k3s_ufw is defined
