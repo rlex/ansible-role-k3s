@@ -104,4 +104,5 @@ k3s_node_allow_subnets:
   - 10.0.0.0/8
 ```
 Please note that it exposes both TCP and UDP ports. You can also specify ranges like "30000:33000"  
-This default rules are designed to work with some kind of internal VPN (i use tinc), flannel with wireguard backend and nginx ingress controller on master node.
+This default rules are designed to work with some kind of internal VPN (i use tinc), flannel with wireguard backend and nginx ingress controller on master node.  
+Please also note that ufw **will not** prevent access to services exposed via hostPort/nodePort, so pay attention to what you expose.
