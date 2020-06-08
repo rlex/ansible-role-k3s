@@ -61,14 +61,12 @@
         rule: allow
         port: "{{ item }}"
       with_items: "{{ k3s_master_allow_ports }}"
-      when: k3s_master and k3s_master is defined
 
     - name: Allow specified subnets in ufw (master)
       ufw:
         rule: allow
         src: "{{ item }}"
-      with_items: "{{ k3s_master_allow_subnets | list }}"
-      when: k3s_master and k3s_master is defined
+      with_items: "{{ k3s_master_allow_subnets }}"
 
     - name: Set ufw policy to deny incoming
       ufw:
