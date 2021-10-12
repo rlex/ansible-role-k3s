@@ -12,17 +12,7 @@ k3s_node: false
 k3s_bpffs: false
 k3s_node_external_ip: ""
 k3s_node_ip: ""
-k3s_ufw_enabled: false
-k3s_master_allow_ports:
-  - 22
-  - 6443
-  - 80
-  - 443
-  - 51820
-k3s_master_allow_subnets:
-  - 10.0.0.0/8
-k3s_node_allow_ports:
-  - 22
-  - 51820
 k3s_node_allow_subnets:
   - 10.0.0.0/8
+k3s_additional_packages: []
+k3s_additional_services: []

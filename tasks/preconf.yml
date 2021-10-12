@@ -64,3 +64,18 @@
     name: wireguard
     state: present
   when: k3s_server_flannel_backend == "wireguard"
+
+- name: Install additional packages
+  package:
+    name: "{{ k3s_additional_packages }}"
+    state: present
+  when: k3s_additional_packages
+
+# service module doesn't support globs. We need to do it old way, via loops
+- name: Enable additional services
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  when: k3s_additional_services
+  loop: "{{ k3s_additional_services }}"

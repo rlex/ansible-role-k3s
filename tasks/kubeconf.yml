@@ -1,7 +1,7 @@
 - name: Copy config file to user home directory
   copy:
     src: /etc/rancher/k3s/k3s.yaml
-    dest: ~{{ ansible_user }}/.kube/config
+    dest: ~{{ ansible_user }}/.kube/config-{{ k3s_master_ip }}
     remote_src: yes
     owner: "{{ ansible_user }}"
 
@@ -9,5 +9,5 @@
   command: >-
     k3s kubectl config set-cluster default
       --server=https://{{ k3s_master_ip }}:6443
-      --kubeconfig ~{{ ansible_user }}/.kube/config
+      --kubeconfig ~{{ ansible_user }}/.kube/config-{{ k3s_master_ip }}
   changed_when: true
