@@ -16,25 +16,6 @@
     state: started
     enabled: yes
 
-- name: Wait for node-token
-  wait_for:
-    path: /var/lib/rancher/k3s/server/node-token
-
-- name: Read node-token from master
-  slurp:
-    src: /var/lib/rancher/k3s/server/node-token
-  register: node_token
-
-- name: Store Master node-token
-  set_fact:
-    k3s_node_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
-
-- name: Create directory .kube
-  file:
-    path: ~{{ ansible_user }}/.kube
-    state: directory
-    owner: "{{ ansible_user }}"
-
 - name: Create kubectl symlink
   file:
     src: /usr/local/bin/k3s

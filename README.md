@@ -10,6 +10,7 @@ Compared to original role this one is
 * Can mount bpffs (for cilium) and install wireguard if needed
 * Have streamlined variable names
 * Can be used as submodule
+* Now with multi-master support!
 
 Tested on ubuntu 20.04 but should work on any relatively new OS - all it requires is systemd
 
@@ -62,6 +63,12 @@ k3s_node: true
 Is usually enough
 
 By default master_ip will be ansible_host from node in k3s_master group. In some cases you might want to redefine it (internal network, VPN network, etc)
+
+### Multi-master setup
+When your k3s_master ansible inventory group have more than 1 host, role will detect it and switch to multi-master installation.  
+First node in group will be used as "bootstrap", while following will bootstrap from first node
+
+You can also switch existing, single-node sqlite master to multimaster configuration by adding more masters to existing install - be aware, however, that migration from single-node sqlite to etcd is supported only in k3s >= 1.22!
 
 ### k3s node and external ip
 Sometimes k3s fails to properly detect external and internal ip. For those, you can use this variables:

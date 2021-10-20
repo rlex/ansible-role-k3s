@@ -2,7 +2,7 @@
 
 - name: Copy k3s agent service file
   template:
-    src: "k3s-agent.service.j2"
+    src: "k3s-node.service.j2"
     dest: "{{ k3s_systemd_dir }}/k3s-agent.service"
     owner: root
     group: root
@@ -15,15 +15,3 @@
     daemon_reload: yes
     state: started
     enabled: yes
-
-- name: Create crictl symlink
-  file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/crictl
-    state: link
-
-- name: Create ctr symlink
-  file:
-    src: /usr/local/bin/k3s
-    dest: /usr/local/bin/ctr
-    state: link
