@@ -9,7 +9,7 @@
     mode: 0755
   notify: restart k3s
 
-- name: Enable k3s
+- name: Enable and start k3s (additional masters)
   systemd:
     name: k3s
     daemon_reload: yes

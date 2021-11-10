@@ -15,7 +15,7 @@ ExecStart=/usr/local/bin/k3s agent \
 {% if k3s_node_ip | length > 0 %}
   --node-ip={{ k3s_node_ip }} \
 {% endif %}
-  --server https://{{ k3s_master_ip }}:6443 {{ k3s_agent_extra_args | default("") }}
+  --server https://{{ k3s_master_ip }}:{{ k3s_master_port }} {{ k3s_agent_extra_args | default("") }}
 
 KillMode=process
 Delegate=yes

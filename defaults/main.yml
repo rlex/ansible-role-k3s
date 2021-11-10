@@ -1,7 +1,8 @@
 ---
-k3s_version: v1.22.4+k3s1
+k3s_version: v1.22.3+k3s1
 k3s_systemd_dir: /etc/systemd/system
 k3s_master_ip: "{{ hostvars[groups['k3s_master'][0]]['ansible_host'] | default(groups['k3s_master'][0]) }}"
+k3s_master_port: 6443
 k3s_server_flannel_backend: vxlan
 k3s_server_disable: []
 k3s_server_extra_args: ""

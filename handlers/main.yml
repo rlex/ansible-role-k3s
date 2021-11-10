@@ -4,10 +4,3 @@
     daemon_reload: yes
     state: restarted
     enabled: yes
-
-- name: restart k3s-agent
-  systemd:
-    name: k3s-agent
-    daemon_reload: yes
-    state: restarted
-    enabled: yes

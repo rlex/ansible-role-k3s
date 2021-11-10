@@ -1,17 +1,17 @@
 ---
 
-- name: Copy k3s agent service file
+- name: Copy k3s service file
   template:
     src: "k3s-node.service.j2"
-    dest: "{{ k3s_systemd_dir }}/k3s-agent.service"
+    dest: "{{ k3s_systemd_dir }}/k3s.service"
     owner: root
     group: root
     mode: 0755
-  notify: restart k3s-agent
+  notify: restart k3s
 
-- name: enable k3s-agent
+- name: Enable and start k3s (workers)
   systemd:
-    name: k3s-agent
+    name: k3s
     daemon_reload: yes
     state: started
     enabled: yes

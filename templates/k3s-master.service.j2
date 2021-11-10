@@ -24,7 +24,7 @@ ExecStart=/usr/local/bin/k3s server \
   --disable={{ k3s_server_disable|join(',') }} \
 {% endif %}
 {% if inventory_hostname != hostvars[groups['k3s_master'][0]]['inventory_hostname'] %}
-  --server https://{{ k3s_master_ip }}:6443 \
+  --server https://{{ k3s_master_ip }}:{{ k3s_master_port }} \
 {% endif %}
   --flannel-backend={{ k3s_server_flannel_backend }} {{ k3s_server_extra_args | default("") }}
 KillMode=process
