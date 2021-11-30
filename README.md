@@ -23,6 +23,7 @@ Tested on ubuntu 20.04 but should work on any relatively new OS - all it require
 | k3s_master                 | `false`        | installs k3s server when true                                                                                                        |
 | k3s_node                   | `false`        | installs k3s node when true                                                                                                          |
 | k3s_master_ip              | see below      | ip of master node                                                                                                                    |
+| k3s_master_port            | 6443           | port of masterserver
 | k3s_server_flannel_backend | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
 | k3s_server_disable         | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
 | k3s_server_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
