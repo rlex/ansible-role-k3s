@@ -20,38 +20,42 @@ Tested on ubuntu 20.04 but should work on any relatively new OS - all it require
 | Variable name              | Default value  | Description                                                                                                                          |
 | -------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | k3s_version                | `v1.18.2+k3s1` | version of k3s to install                                                                                                            |
-| k3s_master                 | `false`        | installs k3s server when true                                                                                                        |
-| k3s_node                   | `false`        | installs k3s node when true                                                                                                          |
+| k3s_master                 | `false`        | installs k3s master when true                                                                                                        |
+| k3s_agent                  | `false`        | installs k3s agent when true                                                                                                          |
 | k3s_master_ip              | see below      | ip of master node                                                                                                                    |
-| k3s_master_port            | 6443           | port of masterserver
-| k3s_server_flannel_backend | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
+| k3s_master_port            | 6443           | port of masterserver                                                                                                                 |
+| k3s_flannel_backend        | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
 | k3s_server_disable         | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
-| k3s_server_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
+| k3s_master_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
 | k3s_agent_extra_args       | ``             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
 | k3s_bpffs                  | `false`        | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
-| k3s_node_external_ip       | ``             | specifies k3s external ip                                                                                                            |
-| k3s_node_ip                | ``             | specifies k3s node ip                                                                                                                |
+| k3s_external_ip            | ``             | specifies k3s external ip                                                                                                            |
+| k3s_internal_ip            | ``             | specifies k3s node ip                                                                                                                |
+| k3s_agent_group            | k3s_node       | specifies ansible group name for k3s nodes                                                                                           |
+| k3s_master_group           | k3s_master     | specifies ansible group name for k3s master(s)                                                                                       |
 | k3s_additional_packages    | `[]`           | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
-| k3s_additional_services    | `[]`           | Enables additional services if needed by workloads (ie iscsid)                                                                      |
+| k3s_additional_services    | `[]`           | Enables additional services if needed by workloads (ie iscsid)                                                                       |
 
 ### Usage
 
-Your inventory should have k3s_master group (will probably remove that requirement later):
+By default, your inventory should have k3s_master and k3s_agent group:
 
 ```ini
 [k3s_master]
 kube-master-1.example.org
 
-[k3s_node]
+[k3s_agent]
 kube-node-1.example.org
 kube-node-2.example.org
 ```
+
+You can always change this group names using k3s_node_group and k3s_master_group variables, for example if you have multiple k3s clusters or just want different group names.  
 
 Example group_vars for k3s_master, switching flannel backend to wireguard (which also causes installation of wireguard package in host operating system), and disabling metrics-server and traefik included in k3s:
 ```yaml
 k3s_master: true
 k3s_mount_bpffs: true
-k3s_server_flannel_backend: wireguard
+k3s_flannel_backend: wireguard
 k3s_server_disable:
   - metrics-server
   - traefik
@@ -59,7 +63,7 @@ k3s_server_disable:
 
 On k3s_node, just
 ```yaml
-k3s_node: true
+k3s_agent: true
 ```
 Is usually enough
 
@@ -71,16 +75,16 @@ First node in group will be used as "bootstrap", while following will bootstrap 
 
 You can also switch existing, single-node sqlite master to multimaster configuration by adding more masters to existing install - be aware, however, that migration from single-node sqlite to etcd is supported only in k3s >= 1.22!
 
-### k3s node and external ip
+### k3s and external ip
 Sometimes k3s fails to properly detect external and internal ip. For those, you can use this variables:
 ```
-k3s_node_external_ip
-k3s_node_ip
+k3s_external_ip
+k3s_internal_ip
 ```
 Ie:
 ```yaml
-k3s_node_external_ip: "{{ ansible_default_ipv4['address'] }}"
-k3s_node_ip: "{{ ansible_vpn0.ipv4.address }}"
+k3s_external_ip: "{{ ansible_default_ipv4['address'] }}"
+k3s_internal_ip: "{{ ansible_vpn0.ipv4.address }}"
 ```
 In which case external ip will be ansible default ip and node ip will be ip address of vpn0 interface
 
@@ -100,10 +104,10 @@ open-iscsi will be installed and iscsid service will be both started and enabled
 
 If you want to use something different than default flannel you can set flannel backend to none:
 ```yaml
-k3s_server_flannel_backend: none
+k3s_flannel_backend: none
 ```
 Additionally, if you want to use something with eBPF dataplane enabled (calico, cilium) you might need to disable kube-proxy and mount bpffs filesystem on host node:
 ```yaml
-k3s_mount_bpffs: true
-k3s_server_extra_args: "--disable-kube-proxy"
+k3s_bpffs: true
+k3s_master_extra_args: "--disable-kube-proxy"
 ```

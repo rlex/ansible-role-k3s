@@ -4,29 +4,29 @@ Documentation=https://k3s.io
 After=network-online.target
 
 [Service]
-{% if inventory_hostname != hostvars[groups['k3s_master'][0]]['inventory_hostname'] %}
-Environment=K3S_TOKEN={{ hostvars[groups['k3s_master'][0]]['k3s_node_token'] }}
+{% if inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
+Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token'] }}
 {% endif %}
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s server \
-{% if inventory_hostname == hostvars[groups['k3s_master'][0]]['inventory_hostname'] %}
+{% if inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
   --cluster-init \
 {% endif %}
-{% if k3s_node_external_ip | length > 0 %}
-  --node-external-ip={{ k3s_node_external_ip }} \
+{% if k3s_external_ip | length > 0 %}
+  --node-external-ip={{ k3s_external_ip }} \
 {% endif %}
-{% if k3s_node_ip | length > 0 %}
-  --node-ip={{ k3s_node_ip }} \
+{% if k3s_internal_ip | length > 0 %}
+  --node-ip={{ k3s_internal_ip }} \
 {% endif %}
-{% if k3s_server_disable is defined and k3s_server_disable is iterable %}
-  --disable={{ k3s_server_disable|join(',') }} \
+{% if k3s_master_disable is defined and k3s_master_disable is iterable %}
+  --disable={{ k3s_master_disable|join(',') }} \
 {% endif %}
-{% if inventory_hostname != hostvars[groups['k3s_master'][0]]['inventory_hostname'] %}
+{% if inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
   --server https://{{ k3s_master_ip }}:{{ k3s_master_port }} \
 {% endif %}
-  --flannel-backend={{ k3s_server_flannel_backend }} {{ k3s_server_extra_args | default("") }}
+  --flannel-backend={{ k3s_flannel_backend }} {{ k3s_master_extra_args | default("") }}
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead

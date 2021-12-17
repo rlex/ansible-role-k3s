@@ -4,12 +4,12 @@
   when:
    - k3s_master
    - k3s_master is defined
-   - inventory_hostname == hostvars[groups['k3s_master'][0]]['inventory_hostname']
+   - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
 - import_tasks: additional-masters.yml
   when:
     - k3s_master
     - k3s_master is defined
-    - inventory_hostname != hostvars[groups['k3s_master'][0]]['inventory_hostname']
-- import_tasks: node.yml
-  when: k3s_node and k3s_node is defined
+    - inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+- import_tasks: agent.yml
+  when: k3s_agent and k3s_agent is defined
 - import_tasks: utils.yml

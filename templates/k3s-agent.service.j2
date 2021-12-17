@@ -5,15 +5,15 @@ After=network-online.target
 
 [Service]
 Type=notify
-Environment=K3S_TOKEN={{ hostvars[groups['k3s_master'][0]]['k3s_node_token'] }}
+Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token'] }}
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s agent \
-{% if k3s_node_external_ip | length > 0 %}
-  --node-external-ip={{ k3s_node_external_ip }} \
+{% if k3s_external_ip | length > 0 %}
+  --node-external-ip={{ k3s_external_ip }} \
 {% endif %}
-{% if k3s_node_ip | length > 0 %}
-  --node-ip={{ k3s_node_ip }} \
+{% if k3s_internal_ip | length > 0 %}
+  --node-ip={{ k3s_internal_ip }} \
 {% endif %}
   --server https://{{ k3s_master_ip }}:{{ k3s_master_port }} {{ k3s_agent_extra_args | default("") }}
 

@@ -2,7 +2,7 @@
 
 - name: Copy k3s service file
   template:
-    src: "k3s-node.service.j2"
+    src: "k3s-agent.service.j2"
     dest: "{{ k3s_systemd_dir }}/k3s.service"
     owner: root
     group: root
