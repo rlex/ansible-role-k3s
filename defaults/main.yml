@@ -7,6 +7,8 @@ k3s_flannel_backend: vxlan
 k3s_master_disable: []
 k3s_master_extra_args: []
 k3s_agent_extra_args: ""
+k3s_agent_additional_config: ""
+k3s_master_additional_config: ""
 k3s_master: false
 k3s_agent: false
 k3s_bpffs: false
@@ -16,6 +18,8 @@ k3s_additional_packages: []
 k3s_additional_services: []
 k3s_agent_group: k3s_agent
 k3s_master_group: k3s_master
+k3s_audit_policy: ""
+k3s_audit_webhook: ""
 #backwards compatibility
 k3s_node_extra_args: "{{ k3s_agent_extra_args }}"
 k3s_node_external_ip: "{{ k3s_external_ip }}"

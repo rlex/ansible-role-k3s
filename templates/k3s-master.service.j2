@@ -10,23 +10,7 @@ Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token']
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart=/usr/local/bin/k3s server \
-{% if inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
-  --cluster-init \
-{% endif %}
-{% if k3s_external_ip | length > 0 %}
-  --node-external-ip={{ k3s_external_ip }} \
-{% endif %}
-{% if k3s_internal_ip | length > 0 %}
-  --node-ip={{ k3s_internal_ip }} \
-{% endif %}
-{% if k3s_master_disable is defined and k3s_master_disable is iterable %}
-  --disable={{ k3s_master_disable|join(',') }} \
-{% endif %}
-{% if inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
-  --server https://{{ k3s_master_ip }}:{{ k3s_master_port }} \
-{% endif %}
-  --flannel-backend={{ k3s_flannel_backend }} {{ k3s_master_extra_args | default("") }}
+ExecStart=/usr/local/bin/k3s server {{ k3s_master_extra_args | join(" ") }}
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead

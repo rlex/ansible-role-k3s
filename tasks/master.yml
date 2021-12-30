@@ -1,4 +1,13 @@
 ---
+- name: Generate config
+  template:
+    src: "k3s-config-master.yaml.j2"
+    dest: "/etc/rancher/k3s/config.yaml"
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart k3s
+
 - name: Copy k3s service file
   register: k3s_service
   template:

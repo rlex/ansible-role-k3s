@@ -1,4 +1,15 @@
 ---
+- name: Re-gather facts to get latest info
+  setup:
+
+- name: Pre-create k3s config folder
+  file:
+    path: /etc/rancher/k3s
+    owner: root
+    group: root
+    state: directory
+    mode: 0644
+
 - name: Set SELinux to disabled state
   selinux:
     state: disabled

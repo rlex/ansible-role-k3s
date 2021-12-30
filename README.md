@@ -7,34 +7,36 @@ I use it for my personal kubernetes test lab running on bunch of cheap KVM VPSes
 Compared to original role this one is
 
 * Idempotent and doesn't restart / delete services on each run
-* Can mount bpffs (for cilium) and install wireguard if needed
+* Can mount bpffs (for cilium/etc) and install wireguard if needed
 * Have streamlined variable names
 * Can be used as submodule
 * Now with multi-master support!
+* Now uses config file instead of tons of arguments!
 
 Tested on ubuntu 20.04 but should work on any relatively new OS - all it requires is systemd
 
 ### Variables
 
-
-| Variable name              | Default value  | Description                                                                                                                          |
-| -------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                | `v1.18.2+k3s1` | version of k3s to install                                                                                                            |
-| k3s_master                 | `false`        | installs k3s master when true                                                                                                        |
-| k3s_agent                  | `false`        | installs k3s agent when true                                                                                                          |
-| k3s_master_ip              | see below      | ip of master node                                                                                                                    |
-| k3s_master_port            | 6443           | port of masterserver                                                                                                                 |
-| k3s_flannel_backend        | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
-| k3s_server_disable         | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
-| k3s_master_extra_args      | ``             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
-| k3s_agent_extra_args       | ``             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
-| k3s_bpffs                  | `false`        | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
-| k3s_external_ip            | ``             | specifies k3s external ip                                                                                                            |
-| k3s_internal_ip            | ``             | specifies k3s node ip                                                                                                                |
-| k3s_agent_group            | k3s_node       | specifies ansible group name for k3s nodes                                                                                           |
-| k3s_master_group           | k3s_master     | specifies ansible group name for k3s master(s)                                                                                       |
-| k3s_additional_packages    | `[]`           | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
-| k3s_additional_services    | `[]`           | Enables additional services if needed by workloads (ie iscsid)                                                                       |
+| Variable name                | Default value  | Description                                                                                                                          |
+| ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| k3s_version                  | `v1.22.3+k3s1` | version of k3s to install                                                                                                            |
+| k3s_master                   | `false`        | installs k3s master when true                                                                                                        |
+| k3s_agent                    | `false`        | installs k3s agent when true                                                                                                         |
+| k3s_master_ip                | see below      | ip of master node                                                                                                                    |
+| k3s_master_port              | `6443`         | port of masterserver                                                                                                                 |
+| k3s_flannel_backend          | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
+| k3s_server_disable           | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
+| k3s_master_extra_args        | `[]`           | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
+| k3s_master_additional_config | ``             | YAML with extra config for k3s master                                                                                                |
+| k3s_agent_additional_config  | ``             | YAML with extra config for k3s agent                                                                                                 |
+| k3s_agent_extra_args         | `[]`           | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
+| k3s_bpffs                    | `false`        | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
+| k3s_external_ip              | ``             | specifies k3s external ip                                                                                                            |
+| k3s_internal_ip              | ``             | specifies k3s node ip                                                                                                                |
+| k3s_agent_group              | k3s_node       | specifies ansible group name for k3s nodes                                                                                           |
+| k3s_master_group             | k3s_master     | specifies ansible group name for k3s master(s)                                                                                       |
+| k3s_additional_packages      | `[]`           | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
+| k3s_additional_services      | `[]`           | Enables additional services if needed by workloads (ie iscsid)                                                                       |
 
 ### Usage
 
