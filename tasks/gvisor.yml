@@ -1,0 +1,31 @@
+- name: Download gvisor runsc
+  get_url:
+    url: https://storage.googleapis.com/gvisor/releases/release/latest/{{ ansible_facts.architecture }}/runsc
+    dest: /usr/local/bin/runsc
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Download gvisor containerd-shim
+  get_url:
+    url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
+    dest: /usr/local/bin/containerd-shim-runsc-v1
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Ensure k3s containerd config dir
+  file:
+    path: /var/lib/rancher/k3s/agent/etc/containerd/
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Generate containerd config
+  template:
+    src: "containerd.toml.tmpl.j2"
+    dest: "/var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl"
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart k3s

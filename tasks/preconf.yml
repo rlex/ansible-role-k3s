@@ -2,14 +2,6 @@
 - name: Re-gather facts to get latest info
   setup:
 
-- name: Pre-create k3s config folder
-  file:
-    path: /etc/rancher/k3s
-    owner: root
-    group: root
-    state: directory
-    mode: 0644
-
 - name: Enable IPv4 forwarding
   sysctl:
     name: net.ipv4.ip_forward
@@ -88,3 +80,21 @@
     enabled: yes
   when: k3s_additional_services
   loop: "{{ k3s_additional_services }}"
+
+- name: Pre-create k3s config folders
+  file:
+    path: /etc/rancher/k3s
+    owner: root
+    group: root
+    state: directory
+    mode: 0600
+
+- name: Generate registries config
+  template:
+    src: "registries.yaml.j2"
+    dest: "/etc/rancher/k3s/registries.yaml"
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart k3s
+  when: k3s_registries

@@ -1,4 +1,7 @@
 - import_tasks: preconf.yml
+- import_tasks: gvisor.yml
+  when:
+    - k3s_gvisor
 - import_tasks: install.yml
 - import_tasks: master.yml
   when:

@@ -20,6 +20,10 @@ k3s_agent_group: k3s_agent
 k3s_master_group: k3s_master
 k3s_audit_policy: ""
 k3s_audit_webhook: ""
+k3s_gvisor: false
+#https://github.com/google/gvisor/tags
+k3s_gvisor_version: 20211129
+k3s_registries: ""
 #backwards compatibility
 k3s_node_extra_args: "{{ k3s_agent_extra_args }}"
 k3s_node_external_ip: "{{ k3s_external_ip }}"
