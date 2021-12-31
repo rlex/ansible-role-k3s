@@ -33,6 +33,9 @@
   copy:
     content: "br_netfilter"
     dest: /etc/modules-load.d/br_netfilter.conf
+    mode: 0600
+    owner: root
+    group: root
   when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
 
 - name: Load br_netfilter

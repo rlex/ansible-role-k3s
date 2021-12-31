@@ -5,7 +5,7 @@
     dest: "/etc/rancher/k3s/config.yaml"
     owner: root
     group: root
-    mode: 0755
+    mode: 0600
   notify: restart k3s
 
 - name: Copy k3s service file
@@ -14,7 +14,7 @@
     dest: "{{ k3s_systemd_dir }}/k3s.service"
     owner: root
     group: root
-    mode: 0755
+    mode: 0600
   notify: restart k3s
 
 - name: Enable and start k3s (workers)
