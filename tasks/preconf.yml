@@ -10,11 +10,6 @@
     state: directory
     mode: 0644
 
-- name: Set SELinux to disabled state
-  selinux:
-    state: disabled
-  when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
-
 - name: Enable IPv4 forwarding
   sysctl:
     name: net.ipv4.ip_forward
