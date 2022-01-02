@@ -98,3 +98,12 @@
     mode: 0600
   notify: restart k3s
   when: k3s_registries
+
+- name: Generate containerd config
+  template:
+    src: "containerd.toml.tmpl.j2"
+    dest: "/var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl"
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart k3s

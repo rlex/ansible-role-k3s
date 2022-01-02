@@ -10,7 +10,12 @@ Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token']
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
+{% if k3s_master %}
 ExecStart=/usr/local/bin/k3s server {{ k3s_master_extra_args | join(" ") }}
+{% endif %}
+{% if k3s_agent %}
+ExecStart=/usr/local/bin/k3s agent {{ k3s_agent_extra_args | join(" ") }}
+{% endif %}
 KillMode=process
 Delegate=yes
 # Having non-zero Limit*s causes performance problems due to accounting overhead

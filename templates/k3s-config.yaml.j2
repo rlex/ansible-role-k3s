@@ -1,11 +1,7 @@
+{% if k3s_master %}
+#master only stuff
 {% if inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
 cluster-init: true
-{% endif %}
-{% if k3s_external_ip | length > 0 %}
-node-external-ip: {{ k3s_external_ip }}
-{% endif %}
-{% if k3s_internal_ip | length > 0 %}
-node-ip: {{ k3s_internal_ip }}
 {% endif %}
 {% if k3s_master_disable is defined and k3s_master_disable is iterable %}
 disable:
@@ -17,4 +13,20 @@ server: https://{{ k3s_master_ip }}:{{ k3s_master_port }}
 flannel-backend: '{{ k3s_flannel_backend }}'
 {% if k3s_master_additional_config is defined and k3s_master_additional_config | length > 0 %}
 {{ k3s_master_additional_config | to_nice_yaml }}
+{% endif %}
+{% endif %}
+{% if k3s_agent %}
+#agent only stuff
+server: https://{{ k3s_master_ip }}:{{ k3s_master_port }}
+{% if k3s_agent_additional_config is defined and k3s_agent_additional_config | length > 0 %}
+{{ k3s_agent_additional_config | to_nice_yaml }}
+{% endif %}
+#end of agent only stuff
+{% endif %}
+#generic stuff
+{% if k3s_external_ip | length > 0 %}
+node-external-ip: {{ k3s_external_ip }}
+{% endif %}
+{% if k3s_internal_ip | length > 0 %}
+node-ip: {{ k3s_internal_ip }}
 {% endif %}

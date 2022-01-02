@@ -1,16 +1,28 @@
-### ansible-k3s
-Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
-I use it for my personal kubernetes test lab running on bunch of cheap KVM VPSes.  
-It's tailored for my needs, but it's still pretty generic and can be used anywhere.  
+ <!-- TOC -->
+
+- [Description](#description)
+- [Requirements](#requirements)
+- [Variables](#variables)
+- [Usage](#usage)
+- [Multi-master setup](#multi-master-setup)
+  - [HA with haproxy](#ha-with-haproxy)
+  - [HA with VRRP (keepalived)](#ha-with-vrrp-keepalived)
+- [k3s and external ip](#k3s-and-external-ip)
+- [Additional packages and services](#additional-packages-and-services)
+- [Using custom network plugin](#using-custom-network-plugin)
+- [Adding custom registries](#adding-custom-registries)
+- [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
+- [To be done / some ideas](#to-be-done--some-ideas)
+
+<!-- /TOC -->
 
 ### Description
-Compared to original role by rancher this one is
-* Idempotent and doesn't restart / delete services on each run
-* Can mount bpffs (for cilium/etc) and install wireguard if needed
-* Have streamlined variable names
-* Can install multi-master configuration using builtin etcd server
+Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
+I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries and some oracle cloud VMs.  
+It's tailored for my needs, but it's still very generic and can be used anywhere.  
 
-Tested on ubuntu 20.04 but should work on any relatively new OS - all it requires is systemd
+### Requirements
+Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/), this role also needs systemd.
 
 ### Variables
 
@@ -60,12 +72,11 @@ k3s_server_disable:
   - traefik
 ```
 
-On k3s_node, just
+On k3s_agent, just
 ```yaml
 k3s_agent: true
 ```
-Is usually enough
-
+Is usually enough  
 By default k3s_master_ip will be set to ansible_host from node in k3s_master group.  
 In case of multiple masters, it will be set to ansible_host of first node in k3s_master group.  
 In some cases you might want to redefine it (internal network, VPN network, etc). For that, you can use k3s_master_ip variable.
@@ -76,11 +87,123 @@ First node in group will be used as "bootstrap", while following will bootstrap 
 
 You can also switch existing, single-node sqlite master to multimaster configuration by adding more masters to existing install - be aware, however, that migration from single-node sqlite to etcd is supported only in k3s >= 1.22!
 
-Pay attention, however, that in default configuration all agents will be pointing only to first master, which is not really useful for HA setup. Configuring HA is out of scope for this role, but luckily there is some really good ansible roles available for that:
+Pay attention, however, that in default configuration all agents will be pointing only to first master, which is not really useful for HA setup. Configuring HA is out of scope for this role, but i'll cover some ideas of HA setup:
 
-1) [This keepalived role](https://github.com/Oefenweb/ansible-keepalived) if you have L2 networking available and can use VRRP for failover IP
-2) [This haproxy role](https://github.com/Oefenweb/ansible-haproxy). I run my cluster on top of L3 vpn so i can't use L2, so i just install haproxy on each agent node, point haproxy to all masters, and point agents to localhost haproxy. Dirty, but works.
+#### HA with haproxy
+Using [This haproxy role](https://github.com/Oefenweb/ansible-haproxy). I run my cluster on top of L3 vpn so i can't use L2, so i just install haproxy on each node, point haproxy to all masters, and point agents to localhost haproxy. Dirty, but works. Example config:
 
+```yaml
+haproxy_listen:
+  - name: stats
+    description: Global statistics
+    bind:
+      - listen: '0.0.0.0:1936'
+    mode: http
+    http_request:
+      - action: use-service
+        param: prometheus-exporter
+        cond: if { path /metrics }
+    stats:
+      enable: true
+      uri: /
+      options:
+        - hide-version
+        - show-node
+      admin: if LOCALHOST
+      refresh: 5s
+      auth:
+        - user: admin
+          passwd: 'yoursupersecretpassword'
+haproxy_frontend:
+  - name: kubernetes_master_kube_api
+    description: frontend with k8s api masters
+    bind:
+      - listen: "127.0.0.1:16443"
+    mode: tcp
+    default_backend: k8s-de1-kube-api
+haproxy_backend:
+  - name: k8s-de1-kube-api
+    description: backend with all kubernetes masters
+    mode: tcp
+    balance: roundrobin
+    option:
+      - httpchk GET /readyz
+    http_check: expect status 401
+    default_server_params:
+      - inter 1000
+      - rise 2
+      - fall 2
+    server:
+      - name: k8s-de1-master-1
+        listen: "master-1:6443"
+        param:
+          - check
+          - check-ssl
+          - verify none
+      - name: k8s-de1-master-2
+        listen: "master-2:6443"
+        param:
+          - check
+          - check-ssl
+          - verify none
+      - name: k8s-de1-master-3
+        listen: "master-3:6443"
+        param:
+          - check
+          - check-ssl
+          - verify none
+```
+
+That will start haproxy listening on 127.0.0.1:16443 for connections to k8s masters. You can then redefine master IP and port for agents with 
+```yaml
+k3s_master_ip: 127.0.0.1
+k3s_master_port: 16443
+```
+
+And now your connections are balanced between masters and protected in case of one or two masters will go down. One downside of that config is that it checks for reply 401 on /readyz endpoint, because since certain version of k8s (1.19 if i recall correctly) this endpoint requires authorization. So we just check that it works, not for actual "OK" reply and 200 HTTP code.   
+This proxy also works with initial agent join, so it's better to setup haproxy before installing k3s and then switching to HA config.
+It will also expose prometheus metrics on 0.0.0.0:1936/metrics - pay attention that this part (unlike webui) won't be protected by user and password, so adjust your firewall accordingly if needed!
+
+Of course you can use whatever you want - external cloud LB, nginx, anything, all it needs is TCP protocol support (because in this case we don't want to manage SSL on loadbalancer side). But haproxy provides you with prometheus metrics, have nice webui for monitoring and management, and i'm just familiar with it.
+
+#### HA with VRRP (keepalived)
+You can use [this keepalived role](https://github.com/Oefenweb/ansible-keepalived) if you have L2 networking available and can use VRRP for failover IP. In that case, you might need to add tls-san option in k3s_master_additional_config with your floating ip.
+For keepalived to work, following needs should be met:
+  1) L2 networking must be available. Sadly, this is not a common case with cloud providers and most VPNs.
+  2) Virtual IP must be in same subnet as interfaces on top of which they are used
+
+Sample keepalived configuration on master-1, assuming we use network 10.91.91.0/24 on vpn0 interface:
+```yaml
+keepalived_instances:
+  vpn:
+    interface: vpn0
+    state: MASTER
+    virtual_router_id: 51 #if you have multiple VRRP setups in same network this should be unique
+    priority: 255 #node usually owning IP should always have priority set to 255
+    authentication_password: "somepassword" #can be omitted, but always good to use
+    vips:
+      - "10.91.91.50 dev vpn0 label vpn0:0"
+```
+for backing masters:
+```yaml
+keepalived_instances:
+  vpn:
+    interface: vpn0
+    state: BACKUP
+    virtual_router_id: 51
+    priority: 254 #use lower priority for each node
+    authentication_password: "somepassword"
+    vips:
+      - "10.91.91.50 dev vpn0 label vpn0:0"
+```
+And in k3s configuration:
+```yaml
+k3s_master_additional_config:
+  tls-san: 10.91.91.50
+```
+
+If everything is configured correctly, you should see 10.91.91.50 on vpn0:0 interface on master-1 node. Try stopping keepalived on master-1 and see how IP disappears from master-1 and appears on master-2.  
+From now it's your choice how you want to configure HA - point agents to that floating IP, or install load-balancer on each master node and distribute requests between them.
 ### k3s and external ip
 Sometimes k3s fails to properly detect external and internal ip. For those, you can use this variables:
 ```
@@ -92,10 +215,10 @@ Ie:
 k3s_external_ip: "{{ ansible_default_ipv4['address'] }}"
 k3s_internal_ip: "{{ ansible_vpn0.ipv4.address }}"
 ```
-In which case external ip will be ansible default ip and node ip will be ip address of vpn0 interface
+In which case external ip will be ansible default ip and node ip (internal-ip) will be ip address of vpn0 interface
 
 ### Additional packages and services
-Sometimes certain software requires some packages installed on host system. One of examples is distributed filesystems like longhorn and openebs which require iscsid
+Sometimes certain software requires certain packages installed on host system. Some of examples are distributed filesystems like longhorn and openebs which require iscsid.  
 While it's better to manage such software with dedicated roles, i included that variables for simplicity. If you want openebs-jiva or longhorn to work, you can specify
 ```yaml
 k3s_additional_packages:
@@ -105,8 +228,8 @@ k3s_additional_services:
 ```
 open-iscsi will be installed and iscsid service will be both started and enabled at boot-time before k3s installation
 
-### Custom network plugin
-If you want to use something different than default flannel you can set flannel backend to none, which will remove flannel
+### Using custom network plugin
+If you want to use something different and self-managed than default flannel you can set flannel backend to none, which will remove flannel completely:
 ```yaml
 k3s_flannel_backend: none
 ```
@@ -117,7 +240,7 @@ k3s_master_additional_config:
   disable-kube-proxy: true
 ```
 
-### Custom registries
+### Adding custom registries
 By using k3s_registries variable you can configure custom registries, both origins and mirrors. Format follows [official](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) config format.  
 Example:
 ```yaml
@@ -137,10 +260,10 @@ k3s_registries:
         ca_file:   # path to the ca file used in the registry
 ```
 
-### Gvisor
-
+### Sandboxing workloads with gvisor
 By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  
-It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest:  
+There is also k3s_gvisor_hostnetwork setting which will configure additional gvisor instance with host-networking mode, allowing to communicate with resources inside k8s while still keeping other gvisor features
+It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:  
 ```yaml
 apiVersion: node.k8s.io/v1
 kind: RuntimeClass
@@ -148,15 +271,30 @@ metadata:
   name: gvisor
 handler: runsc
 ```
+And following for gvisor-hostnetwork:
+```yaml
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: gvisor-hostnetwork
+handler: runsc-hostnetwork
+```
 After that you should be able to launch gvisor-enabled pods by adding runtimeClassName to pod spec, ie
 ```yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: gvisor-ubuntu
+  name: gvisor-nginx
 spec:
   runtimeClassName: gvisor
   containers:
     - name: nginx
       image: nginx
 ```
+
+### To be done / some ideas
+  * Additional configuration for gvisor
+  * Proper configuration for containerd
+  * Automatic selinux policy installer
+  * Maybe some basic management of k8s resources (ie creating gvisor RuntimeClass if gvisor is enabled)
+  * Downloading and patching kubeconfig to local machine

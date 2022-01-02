@@ -1,7 +1,7 @@
 ---
 - name: Generate config
   template:
-    src: "k3s-config-master.yaml.j2"
+    src: "k3s-config.yaml.j2"
     dest: "/etc/rancher/k3s/config.yaml"
     owner: root
     group: root
@@ -11,7 +11,7 @@
 - name: Copy k3s service file
   register: k3s_service
   template:
-    src: "k3s-master.service.j2"
+    src: "k3s.service.j2"
     dest: "{{ k3s_systemd_dir }}/k3s.service"
     owner: root
     group: root

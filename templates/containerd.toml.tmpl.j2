@@ -10,5 +10,21 @@
   disable_snapshot_annotations = true
 [plugins.cri.containerd.runtimes.runc]
   runtime_type = "io.containerd.runc.v2"
+{% if k3s_gvisor %}
 [plugins.cri.containerd.runtimes.runsc]
   runtime_type = "io.containerd.runsc.v1"
+{% endif %}
+{% if k3s_gvisor_hostnetwork %}
+[plugins.cri.containerd.runtimes.runsc-hostnetwork]
+  runtime_type = "io.containerd.runsc.v1"
+{% endif %}
+{% if k3s_gvisor %}
+[plugins.cri.containerd.runtimes.runsc.options]
+  TypeUrl = "io.containerd.runsc.v1.options"
+  ConfigPath = "/var/lib/rancher/k3s/agent/etc/containerd/runsc.toml"
+{% endif %}
+{% if k3s_gvisor_hostnetwork %}
+[plugins.cri.containerd.runtimes.runsc-hostnetwork.options]
+  TypeUrl = "io.containerd.runsc.v1.options"
+  ConfigPath = "/var/lib/rancher/k3s/agent/etc/containerd/runsc-hostnetwork.toml"
+{% endif %}
