@@ -43,7 +43,8 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_external_ip              | ``             | specifies k3s external ip                                                                                                            |
 | k3s_internal_ip              | ``             | specifies k3s node ip                                                                                                                |
 | k3s_registries               | ``             | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
-| k3s_gvisor                   | ``             | Installs [gvisor](https://gvisor.dev)                                                                                                |
+| k3s_gvisor                   | `false`        | Installs [gvisor](https://gvisor.dev)                                                                                                |
+| k3s_gvisor_hostnetwork       | `false`        | Installs [gvisor](https://gvisor.dev) with host-network capability                                                                   |
 | k3s_agent_group              | k3s_node       | specifies ansible group name for k3s nodes                                                                                           |
 | k3s_master_group             | k3s_master     | specifies ansible group name for k3s master(s)                                                                                       |
 | k3s_additional_packages      | `[]`           | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
