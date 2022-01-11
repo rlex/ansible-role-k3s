@@ -83,11 +83,14 @@
 
 - name: Pre-create k3s config folders
   file:
-    path: /etc/rancher/k3s
+    path: "{{ item }}"
     owner: root
     group: root
     state: directory
     mode: 0600
+  with_items:
+    - /etc/rancher/k3s
+    - /var/lib/rancher/k3s/agent/etc/containerd
 
 - name: Generate registries config
   template:
