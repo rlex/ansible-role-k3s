@@ -16,3 +16,8 @@
 - import_tasks: agent.yml
   when: k3s_agent and k3s_agent is defined
 - import_tasks: utils.yml
+- import_tasks: kubeconfig.yml
+  when:
+    - k3s_kubeconfig
+    - k3s_master
+    - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']

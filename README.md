@@ -8,6 +8,7 @@
   - [HA with haproxy](#ha-with-haproxy)
   - [HA with VRRP (keepalived)](#ha-with-vrrp-keepalived)
 - [k3s and external ip](#k3s-and-external-ip)
+- [Getting kubeconfig file via role](#getting-kubeconfig-file-via-role)
 - [Additional packages and services](#additional-packages-and-services)
 - [Using custom network plugin](#using-custom-network-plugin)
 - [Adding custom registries](#adding-custom-registries)
@@ -18,37 +19,41 @@
 
 ### Description
 Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
-I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries and some oracle cloud VMs.  
-It's tailored for my needs, but it's still very generic and can be used anywhere.  
+I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries and some cloud VMs and so on.  
+It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, plus all of my custom stuff can be disabled via variables  
 
 ### Requirements
 Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/), this role also needs systemd.
 
 ### Variables
 
-| Variable name                | Default value  | Description                                                                                                                          |
-| ---------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                  | `v1.22.3+k3s1` | version of k3s to install                                                                                                            |
-| k3s_master                   | `false`        | installs k3s master when true                                                                                                        |
-| k3s_agent                    | `false`        | installs k3s agent when true                                                                                                         |
-| k3s_master_ip                | see below      | ip of master node                                                                                                                    |
-| k3s_master_port              | `6443`         | port of masterserver                                                                                                                 |
-| k3s_flannel_backend          | `vxlan`        | k3s flannel backend to use. Set to none to disable flannel                                                                           |
-| k3s_server_disable           | `[]`           | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
-| k3s_master_extra_args        | `[]`           | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
-| k3s_master_additional_config | ``             | YAML with extra config for k3s master                                                                                                |
-| k3s_agent_additional_config  | ``             | YAML with extra config for k3s agent                                                                                                 |
-| k3s_agent_extra_args         | `[]`           | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
-| k3s_bpffs                    | `false`        | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
-| k3s_external_ip              | ``             | specifies k3s external ip                                                                                                            |
-| k3s_internal_ip              | ``             | specifies k3s node ip                                                                                                                |
-| k3s_registries               | ``             | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
-| k3s_gvisor                   | `false`        | Installs [gvisor](https://gvisor.dev)                                                                                                |
-| k3s_gvisor_hostnetwork       | `false`        | Installs [gvisor](https://gvisor.dev) with host-network capability                                                                   |
-| k3s_agent_group              | k3s_node       | specifies ansible group name for k3s nodes                                                                                           |
-| k3s_master_group             | k3s_master     | specifies ansible group name for k3s master(s)                                                                                       |
-| k3s_additional_packages      | `[]`           | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
-| k3s_additional_services      | `[]`           | Enables additional services if needed by workloads (ie iscsid)                                                                       |
+| Variable name                | Default value                    | Description                                                                                                                          |
+| ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| k3s_version                  | `v1.22.3+k3s1`                   | version of k3s to install                                                                                                            |
+| k3s_master                   | `false`                          | installs k3s master when true                                                                                                        |
+| k3s_agent                    | `false`                          | installs k3s agent when true                                                                                                         |
+| k3s_master_ip                | see below                        | ip of master node                                                                                                                    |
+| k3s_master_port              | `6443`                           | port of masterserver                                                                                                                 |
+| k3s_flannel_backend          | `vxlan`                          | k3s flannel backend to use. Set to none to disable flannel                                                                           |
+| k3s_server_disable           | `[]`                             | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
+| k3s_master_extra_args        | `[]`                             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
+| k3s_master_additional_config | ``                               | YAML with extra config for k3s master                                                                                                |
+| k3s_agent_additional_config  | ``                               | YAML with extra config for k3s agent                                                                                                 |
+| k3s_agent_extra_args         | `[]`                             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
+| k3s_bpffs                    | `false`                          | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
+| k3s_external_ip              | ``                               | specifies k3s external ip                                                                                                            |
+| k3s_internal_ip              | ``                               | specifies k3s node ip                                                                                                                |
+| k3s_registries               | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
+| k3s_gvisor                   | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
+| k3s_gvisor_hostnetwork       | `false`                          | Installs [gvisor](https://gvisor.dev) with host-network capability                                                                   |
+| k3s_kubeconfig               | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
+| k3s_kubeconfig_server        | see below                        | specifies server for use in kubeconfig                                                                                               |
+| k3s_kubeconfig_context       | k3s                              | specifies context to use in kubeconfig                                                                                               |
+| k3s_kubeconfig_target:       | ``{{ k3s_kubeconfig_context }}`` | specifies filename for downloading kubeconfig                                                                                        |
+| k3s_agent_group              | k3s_node                         | specifies ansible group name for k3s nodes                                                                                           |
+| k3s_master_group             | k3s_master                       | specifies ansible group name for k3s master(s)                                                                                       |
+| k3s_additional_packages      | `[]`                             | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
+| k3s_additional_services      | `[]`                             | Enables additional services if needed by workloads (ie iscsid)                                                                       |
 
 ### Usage
 
@@ -218,6 +223,24 @@ k3s_internal_ip: "{{ ansible_vpn0.ipv4.address }}"
 ```
 In which case external ip will be ansible default ip and node ip (internal-ip) will be ip address of vpn0 interface
 
+### Getting kubeconfig file via role
+Role have ability to download kubeconfig file to machine from where ansible was run. To use it, set following variables:
+```
+k3s_kubeconfig: true
+k3s_kubeconfig_context: k3s-de1
+```
+Role will perform following:
+1. Copy /etc/rancher/k3s/k3s.yml to ~/.kube/config-${ k3s_kubeconfig_context } 
+2. Patch it with your preferred context name specified in k3s_kubeconfig_context variable instead of stock "default"
+3. Patch it with proper server URL (by default, it will be ansible_host of first master node in group specified in variable k3s_master_group, with port 6443, aka "initial master"), but you can override it with k3s_kubeconfig_server
+4. Download resulting file to machine running ansible with path ~/.kube/config-${ k3s_kubeconfig_context }, in current example it will be ~/.kube/config-k3s-de1  
+And you can start using it right away.  
+However, if your master is configured differently (HA IP, Load balancer, etc), you might want to specify server manually. For this, you can use k3s_kubeconfig_server variable:
+```
+k3s_kubeconfig_server: "master-ha.k8s.example.org:6443"
+```
+Please note that role will not track changes of /etc/rancher/k3s/k3s.yml - if you redeploy your k3s cluster and need new kubeconfig, just delete existing local kubeconfig to get new one.
+
 ### Additional packages and services
 Sometimes certain software requires certain packages installed on host system. Some of examples are distributed filesystems like longhorn and openebs which require iscsid.  
 While it's better to manage such software with dedicated roles, i included that variables for simplicity. If you want openebs-jiva or longhorn to work, you can specify
@@ -298,4 +321,3 @@ spec:
   * Proper configuration for containerd
   * Automatic selinux policy installer
   * Maybe some basic management of k8s resources (ie creating gvisor RuntimeClass if gvisor is enabled)
-  * Downloading and patching kubeconfig to local machine
