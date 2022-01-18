@@ -4,7 +4,7 @@
     dest: /usr/local/bin/runsc
     owner: root
     group: root
-    mode: 0755
+    mode: 0600
 
 - name: Download gvisor containerd-shim
   get_url:
@@ -12,14 +12,7 @@
     dest: /usr/local/bin/containerd-shim-runsc-v1
     owner: root
     group: root
-    mode: 0755
-
-- name: Ensure k3s containerd config dir
-  file:
-    path: /var/lib/rancher/k3s/agent/etc/containerd/
-    mode: 0755
-    owner: root
-    group: root
+    mode: 0600
 
 - name: Generate gvisor config
   template:
