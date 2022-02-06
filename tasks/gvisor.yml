@@ -1,10 +1,10 @@
 - name: Download gvisor runsc
   get_url:
-    url: https://storage.googleapis.com/gvisor/releases/release/latest/{{ ansible_facts.architecture }}/runsc
+    url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
     dest: /usr/local/bin/runsc
     owner: root
     group: root
-    mode: 0600
+    mode: 0700
 
 - name: Download gvisor containerd-shim
   get_url:
@@ -12,7 +12,7 @@
     dest: /usr/local/bin/containerd-shim-runsc-v1
     owner: root
     group: root
-    mode: 0600
+    mode: 0700
 
 - name: Generate gvisor config
   template:
