@@ -4,7 +4,7 @@
     dest: /usr/local/bin/runsc
     owner: root
     group: root
-    mode: 0700
+    mode: 0755
 
 - name: Download gvisor containerd-shim
   get_url:
@@ -12,7 +12,7 @@
     dest: /usr/local/bin/containerd-shim-runsc-v1
     owner: root
     group: root
-    mode: 0700
+    mode: 0755
 
 - name: Generate gvisor config
   template:

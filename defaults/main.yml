@@ -24,6 +24,7 @@ k3s_gvisor: false
 k3s_gvisor_hostnetwork: false
 #https://github.com/google/gvisor/tags
 k3s_gvisor_version: 20220131
+k3s_sysctl_config: {}
 k3s_registries: ""
 k3s_kubeconfig: false
 k3s_kubeconfig_server: "{{ hostvars[groups[k3s_master_group][0]]['ansible_host'] | default(groups[k3s_master_group][0]) }}:{{ k3s_master_port }}"

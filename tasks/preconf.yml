@@ -81,6 +81,17 @@
   when: k3s_additional_services
   loop: "{{ k3s_additional_services }}"
 
+- name: Set additional sysctl settings
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    sysctl_file: /etc/sysctl.d/99-k3s.conf
+    state: present
+    reload: yes
+    ignoreerrors: yes
+  with_dict: '{{ k3s_sysctl_config }}'
+
 - name: Pre-create k3s config folders
   file:
     path: "{{ item }}"

@@ -12,6 +12,8 @@
 - [Additional packages and services](#additional-packages-and-services)
 - [Using custom network plugin](#using-custom-network-plugin)
 - [Adding custom registries](#adding-custom-registries)
+- [Setting sysctl](#setting-sysctl)
+- [Provisioning cluster using external cloud-controller-manager](#provisioning-cluster-using-external-cloud-controller-manager)
 - [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
 - [To be done / some ideas](#to-be-done--some-ideas)
 
@@ -54,6 +56,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_master_group             | k3s_master                       | specifies ansible group name for k3s master(s)                                                                                       |
 | k3s_additional_packages      | `[]`                             | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
 | k3s_additional_services      | `[]`                             | Enables additional services if needed by workloads (ie iscsid)                                                                       |
+| k3s_sysctl_config            | `{}`                             | Allows setting arbitrary sysctl settings |
 
 ### Usage
 
@@ -283,6 +286,32 @@ k3s_registries:
         key_file:  # path to the key file used in the registry
         ca_file:   # path to the ca file used in the registry
 ```
+
+### Setting sysctl
+
+Role also allows setting arbitrary sysctl settings using k3s_sysctl_config variable in dict format:
+```
+k3s_sysctl_configs:
+  fs.inotify.max_user_instances: 128
+```
+Settings defined with that varible will be persisted in /etc/sysctl.d/99-k3s.conf file, loading them after system reboots
+
+### Provisioning cluster using external cloud-controller-manager
+By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their [ccm](https://github.com/hetznercloud/hcloud-cloud-controller-manager)) you will need to specify following parameters _before_ first cluster start, since cloud controller can't be changed after cluster deployment:
+
+```
+k3s_master_additional_config:
+  disable-cloud-controller: true
+  kubelet-arg:
+  - "cloud-provider=external"
+
+k3s_agent_additional_config:
+  kubelet-arg:
+  - "cloud-provider=external"
+```
+
+Please note that kubelet argument with cloud-provider=external needs to be specified on both master and worker nodes, while disable-cloud-controller needs to be specified on master only.
+
 
 ### Sandboxing workloads with gvisor
 By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  
