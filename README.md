@@ -297,7 +297,7 @@ k3s_sysctl_configs:
 Settings defined with that varible will be persisted in /etc/sysctl.d/99-k3s.conf file, loading them after system reboots
 
 ### Provisioning cluster using external cloud-controller-manager
-By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their [ccm](https://github.com/hetznercloud/hcloud-cloud-controller-manager)) you will need to specify following parameters _before_ first cluster start, since cloud controller can't be changed after cluster deployment:
+By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their [ccm](https://github.com/hetznercloud/hcloud-cloud-controller-manager)) you will need to specify following parameters **before** first cluster start, since cloud controller can't be changed after cluster deployment:
 
 ```
 k3s_master_additional_config:
