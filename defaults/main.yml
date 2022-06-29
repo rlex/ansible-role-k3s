@@ -1,5 +1,5 @@
 ---
-k3s_version: v1.22.3+k3s1
+k3s_version: v1.23.7+k3s1
 k3s_systemd_dir: /etc/systemd/system
 k3s_master_ip: "{{ hostvars[groups[k3s_master_group][0]]['ansible_host'] | default(groups[k3s_master_group][0]) }}"
 k3s_master_port: 6443
@@ -23,7 +23,7 @@ k3s_audit_webhook: ""
 k3s_gvisor: false
 k3s_gvisor_hostnetwork: false
 #https://github.com/google/gvisor/tags
-k3s_gvisor_version: 20220131
+k3s_gvisor_version: 20220606
 k3s_sysctl_config: {}
 k3s_registries: ""
 k3s_kubeconfig: false
