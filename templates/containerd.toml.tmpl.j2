@@ -4,6 +4,8 @@
   stream_server_address = "127.0.0.1"
   stream_server_port = "10010"
   enable_selinux = false
+  enable_unprivileged_ports = true
+  enable_unprivileged_icmp = true
   sandbox_image = "rancher/mirrored-pause:3.6"
 [plugins.cri.containerd]
   snapshotter = "overlayfs"
@@ -11,7 +13,7 @@
 [plugins.cri.containerd.runtimes.runc]
   runtime_type = "io.containerd.runc.v2"
 [plugins.cri.containerd.runtimes.runc.options]
-  SystemdCgroup = true
+  SystemdCgroup = false
 {% if k3s_gvisor %}
 [plugins.cri.containerd.runtimes.runsc]
   runtime_type = "io.containerd.runsc.v1"
