@@ -1,6 +1,7 @@
 #jinja2:variable_start_string:'[[' , variable_end_string:']]' , block_start_string:'[%', block_end_string:'%]'
-#TEMPLATE NEEDS TO BE RESYNCED WITH EACH MAJOR UPDATE
-#https://github.com/k3s-io/k3s/blob/v1.23.2%2Bk3s1/pkg/agent/templates/templates_linux.go
+#Template needs to be re-synced with each containerd update
+#Current version:
+#https://github.com/k3s-io/k3s/blob/v1.24.2%2Bk3s1/pkg/agent/templates/templates_linux.go
 
 [plugins.opt]
   path = "{{ .NodeConfig.Containerd.Opt }}"
@@ -8,6 +9,8 @@
   stream_server_address = "127.0.0.1"
   stream_server_port = "10010"
   enable_selinux = {{ .NodeConfig.SELinux }}
+  enable_unprivileged_ports = true
+  enable_unprivileged_icmp = true
 {{- if .DisableCgroup}}
   disable_cgroup = true
 {{end}}
@@ -68,6 +71,8 @@ enable_keychain = true
 {{end}}
 [plugins.cri.containerd.runtimes.runc]
   runtime_type = "io.containerd.runc.v2"
+[plugins.cri.containerd.runtimes.runc.options]
+	SystemdCgroup = {{ .SystemdCgroup }}
 {{ if .PrivateRegistryConfig }}
 {{ if .PrivateRegistryConfig.Mirrors }}
 [plugins.cri.registry.mirrors]{{end}}
