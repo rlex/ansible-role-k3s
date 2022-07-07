@@ -47,7 +47,6 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_internal_ip              | ``                               | specifies k3s node ip                                                                                                                |
 | k3s_registries               | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
 | k3s_gvisor                   | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
-| k3s_gvisor_hostnetwork       | `false`                          | Installs [gvisor](https://gvisor.dev) with host-network capability                                                                   |
 | k3s_kubeconfig               | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
 | k3s_kubeconfig_server        | see below                        | specifies server for use in kubeconfig                                                                                               |
 | k3s_kubeconfig_context       | k3s                              | specifies context to use in kubeconfig                                                                                               |
@@ -315,7 +314,6 @@ Please note that kubelet argument with cloud-provider=external needs to be speci
 
 ### Sandboxing workloads with gvisor
 By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  
-There is also k3s_gvisor_hostnetwork setting which will configure additional gvisor instance with host-networking mode, allowing to communicate with resources inside k8s while still keeping other gvisor features
 It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:  
 ```yaml
 apiVersion: node.k8s.io/v1
@@ -323,14 +321,6 @@ kind: RuntimeClass
 metadata:
   name: gvisor
 handler: runsc
-```
-And following for gvisor-hostnetwork:
-```yaml
-apiVersion: node.k8s.io/v1
-kind: RuntimeClass
-metadata:
-  name: gvisor-hostnetwork
-handler: runsc-hostnetwork
 ```
 After that you should be able to launch gvisor-enabled pods by adding runtimeClassName to pod spec, ie
 ```yaml

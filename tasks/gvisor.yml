@@ -23,13 +23,3 @@
     mode: 0600
   notify: restart k3s
 #  when: k3s_gvisor_config
-
-- name: Generate gvisor-hostnetwork config
-  template:
-    src: "runsc-hostnetwork.toml.j2"
-    dest: "/var/lib/rancher/k3s/agent/etc/containerd/runsc-hostnetwork.toml"
-    owner: root
-    group: root
-    mode: 0600
-  notify: restart k3s
-#  when: k3s_gvisor_hostnework_config
