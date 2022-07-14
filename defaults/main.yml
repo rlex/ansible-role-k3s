@@ -21,8 +21,9 @@ k3s_master_group: k3s_master
 k3s_audit_policy: ""
 k3s_audit_webhook: ""
 k3s_gvisor: false
+k3s_gvisor_platform: ptrace
 #https://github.com/google/gvisor/tags
-k3s_gvisor_version: 20220627
+k3s_gvisor_version: 20220704
 k3s_sysctl_config: {}
 k3s_registries: ""
 k3s_kubeconfig: false

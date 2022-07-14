@@ -116,6 +116,7 @@ enable_keychain = true
 [% endif %]
 [% if k3s_gvisor %]
 [plugins.cri.containerd.runtimes.runsc.options]
+  SystemdCgroup = {{ .SystemdCgroup }}
   TypeUrl = "io.containerd.runsc.v1.options"
   ConfigPath = "/var/lib/rancher/k3s/agent/etc/containerd/runsc.toml"
 [% endif %]

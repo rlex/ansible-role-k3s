@@ -47,6 +47,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_internal_ip              | ``                               | specifies k3s node ip                                                                                                                |
 | k3s_registries               | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
 | k3s_gvisor                   | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
+| k3s_gvisor_platform          | `ptrace`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor |
 | k3s_kubeconfig               | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
 | k3s_kubeconfig_server        | see below                        | specifies server for use in kubeconfig                                                                                               |
 | k3s_kubeconfig_context       | k3s                              | specifies context to use in kubeconfig                                                                                               |
@@ -337,6 +338,6 @@ spec:
 
 ### To be done / some ideas
   * Additional configuration for gvisor
-  * Proper configuration for containerd
-  * Automatic selinux policy installer
+  * In case of gvisor is running in kvm mode, load corresponding kernel modules
+  * Automatic selinux policy installer for centos/etc
   * Maybe some basic management of k8s resources (ie creating gvisor RuntimeClass if gvisor is enabled)
