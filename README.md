@@ -13,6 +13,7 @@
 - [Using custom network plugin](#using-custom-network-plugin)
 - [Adding custom registries](#adding-custom-registries)
 - [Setting sysctl](#setting-sysctl)
+- [Setting kubelet arguments](#setting-kubelet-arguments)
 - [Provisioning cluster using external cloud-controller-manager](#provisioning-cluster-using-external-cloud-controller-manager)
 - [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
 - [To be done / some ideas](#to-be-done--some-ideas)
@@ -29,34 +30,36 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 ### Variables
 
-| Variable name                | Default value                    | Description                                                                                                                          |
-| ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                  | `v1.22.3+k3s1`                   | version of k3s to install                                                                                                            |
-| k3s_master                   | `false`                          | installs k3s master when true                                                                                                        |
-| k3s_agent                    | `false`                          | installs k3s agent when true                                                                                                         |
-| k3s_master_ip                | see below                        | ip of master node                                                                                                                    |
-| k3s_master_port              | `6443`                           | port of masterserver                                                                                                                 |
-| k3s_flannel_backend          | `vxlan`                          | k3s flannel backend to use. Set to none to disable flannel                                                                           |
-| k3s_server_disable           | `[]`                             | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
-| k3s_master_extra_args        | `[]`                             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
-| k3s_master_additional_config | ``                               | YAML with extra config for k3s master                                                                                                |
-| k3s_agent_additional_config  | ``                               | YAML with extra config for k3s agent                                                                                                 |
-| k3s_agent_extra_args         | `[]`                             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
-| k3s_bpffs                    | `false`                          | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
-| k3s_external_ip              | ``                               | specifies k3s external ip                                                                                                            |
-| k3s_internal_ip              | ``                               | specifies k3s node ip                                                                                                                |
-| k3s_registries               | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
-| k3s_gvisor                   | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
-| k3s_gvisor_platform          | `ptrace`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor |
-| k3s_kubeconfig               | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
-| k3s_kubeconfig_server        | see below                        | specifies server for use in kubeconfig                                                                                               |
-| k3s_kubeconfig_context       | k3s                              | specifies context to use in kubeconfig                                                                                               |
-| k3s_kubeconfig_target:       | ``{{ k3s_kubeconfig_context }}`` | specifies filename for downloading kubeconfig                                                                                        |
-| k3s_agent_group              | k3s_node                         | specifies ansible group name for k3s nodes                                                                                           |
-| k3s_master_group             | k3s_master                       | specifies ansible group name for k3s master(s)                                                                                       |
-| k3s_additional_packages      | `[]`                             | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
-| k3s_additional_services      | `[]`                             | Enables additional services if needed by workloads (ie iscsid)                                                                       |
-| k3s_sysctl_config            | `{}`                             | Allows setting arbitrary sysctl settings |
+| Variable name                 | Default value                    | Description                                                                                                                          |
+| ----------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| k3s_version                   | `v1.22.3+k3s1`                   | version of k3s to install                                                                                                            |
+| k3s_master                    | `false`                          | installs k3s master when true                                                                                                        |
+| k3s_agent                     | `false`                          | installs k3s agent when true                                                                                                         |
+| k3s_master_ip                 | see below                        | ip of master node                                                                                                                    |
+| k3s_master_port               | `6443`                           | port of masterserver                                                                                                                 |
+| k3s_flannel_backend           | `vxlan`                          | k3s flannel backend to use. Set to none to disable flannel                                                                           |
+| k3s_server_disable            | `[]`                             | array of k3s packaged components to disable (traefik,metrics-server,etc)                                                             |
+| k3s_master_extra_args         | `[]`                             | extra arguments for k3s server ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/server-config/)) |
+| k3s_master_additional_config  | ``                               | YAML with extra config for k3s master                                                                                                |
+| k3s_agent_additional_config   | ``                               | YAML with extra config for k3s agent                                                                                                 |
+| k3s_kubelet_additional_config | ``                               | Additional arguments for kubelet, see docs                                                                                           |
+| k3s_agent_extra_args          | `[]`                             | extra arguments for k3s agent ([official docs](https://rancher.com/docs/k3s/latest/en/installation/install-options/agent-config/))   |
+| k3s_bpffs                     | `false`                          | mounts /sys/fs/bpf bpffs (needed by some network stacks)                                                                             |
+| k3s_external_ip               | ``                               | specifies k3s external ip                                                                                                            |
+| k3s_internal_ip               | ``                               | specifies k3s node ip                                                                                                                |
+| k3s_registries                | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
+| k3s_cronjob_prune_images      | `absent`                         | Configures cronjob that prunes unused images in containerd daily. Either `absent` or `present`                                       |
+| k3s_gvisor                    | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
+| k3s_gvisor_platform           | `ptrace`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor                                           |
+| k3s_kubeconfig                | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
+| k3s_kubeconfig_server         | see below                        | specifies server for use in kubeconfig                                                                                               |
+| k3s_kubeconfig_context        | k3s                              | specifies context to use in kubeconfig                                                                                               |
+| k3s_kubeconfig_target:        | ``{{ k3s_kubeconfig_context }}`` | specifies filename for downloading kubeconfig                                                                                        |
+| k3s_agent_group               | k3s_node                         | specifies ansible group name for k3s nodes                                                                                           |
+| k3s_master_group              | k3s_master                       | specifies ansible group name for k3s master(s)                                                                                       |
+| k3s_additional_packages       | `[]`                             | Installs additional packages if needed by workloads (ie iscsid)                                                                      |
+| k3s_additional_services       | `[]`                             | Enables additional services if needed by workloads (ie iscsid)                                                                       |
+| k3s_sysctl_config             | `{}`                             | Allows setting arbitrary sysctl settings                                                                                             |
 
 ### Usage
 
@@ -296,22 +299,24 @@ k3s_sysctl_configs:
 ```
 Settings defined with that varible will be persisted in /etc/sysctl.d/99-k3s.conf file, loading them after system reboots
 
+### Setting kubelet arguments
+To pass arguments for kubelet, you can use k3s_kubelet_additional_config variable:
+```
+k3s_kubelet_additional_config:
+  - "image-gc-high-threshold=40"
+  - "image-gc-low-threshold=30"
+```
+
 ### Provisioning cluster using external cloud-controller-manager
 By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their [ccm](https://github.com/hetznercloud/hcloud-cloud-controller-manager)) you will need to specify following parameters **before** first cluster start, since cloud controller can't be changed after cluster deployment:
 
 ```
 k3s_master_additional_config:
   disable-cloud-controller: true
-  kubelet-arg:
-  - "cloud-provider=external"
 
-k3s_agent_additional_config:
-  kubelet-arg:
+k3s_kubelet_additional_config:
   - "cloud-provider=external"
 ```
-
-Please note that kubelet argument with cloud-provider=external needs to be specified on both master and worker nodes, while disable-cloud-controller needs to be specified on master only.
-
 
 ### Sandboxing workloads with gvisor
 By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  

@@ -30,3 +30,8 @@ node-external-ip: {{ k3s_external_ip }}
 {% if k3s_internal_ip | length > 0 %}
 node-ip: {{ k3s_internal_ip }}
 {% endif %}
+#generic kubelet args
+{% if k3s_kubelet_additional_config is defined and k3s_kubelet_additional_config | length > 0 %}
+kubelet-arg:
+{{ k3s_kubelet_additional_config | to_nice_yaml(indent=2) }}
+{% endif %}

@@ -21,3 +21,4 @@
     - k3s_kubeconfig
     - k3s_master
     - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+- import_tasks: cron.yml
