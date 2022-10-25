@@ -112,3 +112,12 @@
     mode: 0600
   notify: restart k3s
   when: k3s_registries
+
+- name: Delete k3s containerd config if gvisor is disabled
+  file:
+    src: "containerd.toml.tmpl.j2"
+    path: "/var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl"
+    state: absent
+  notify: restart k3s
+  when:
+    - not k3s_gvisor
