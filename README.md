@@ -16,6 +16,8 @@
 - [Setting kubelet arguments](#setting-kubelet-arguments)
 - [Provisioning cluster using external cloud-controller-manager](#provisioning-cluster-using-external-cloud-controller-manager)
 - [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
+  - [Warning](#warning)
+  - [Usage](#usage-1)
 - [To be done / some ideas](#to-be-done--some-ideas)
 
 <!-- /TOC -->
@@ -32,7 +34,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 | Variable name                 | Default value                    | Description                                                                                                                          |
 | ----------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                   | `v1.22.3+k3s1`                   | version of k3s to install                                                                                                            |
+| k3s_version                   | `v1.25.2+k3s1`                   | version of k3s to install                                                                                                            |
 | k3s_master                    | `false`                          | installs k3s master when true                                                                                                        |
 | k3s_agent                     | `false`                          | installs k3s agent when true                                                                                                         |
 | k3s_master_ip                 | see below                        | ip of master node                                                                                                                    |
@@ -319,6 +321,11 @@ k3s_kubelet_additional_config:
 ```
 
 ### Sandboxing workloads with gvisor
+
+#### Warning
+Due to how k3s works, you might need to sync [k3s built-in containerd config](https://github.com/k3s-io/k3s/blob/v1.25.2%2Bk3s1/pkg/agent/templates/templates_linux.go) according to k3s version you use. Config in this repo is synced with version specified in k3s_version variable.
+
+#### Usage
 By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  
 It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:  
 ```yaml

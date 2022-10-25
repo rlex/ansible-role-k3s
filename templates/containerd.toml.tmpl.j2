@@ -1,7 +1,7 @@
 #jinja2:variable_start_string:'[[' , variable_end_string:']]' , block_start_string:'[%', block_end_string:'%]'
 #Template needs to be re-synced with each containerd update
 #Current version:
-#https://github.com/k3s-io/k3s/blob/v1.24.2%2Bk3s1/pkg/agent/templates/templates_linux.go
+#https://github.com/k3s-io/k3s/blob/v1.25.2%2Bk3s1/pkg/agent/templates/templates_linux.go
 
 [plugins.opt]
   path = "{{ .NodeConfig.Containerd.Opt }}"
@@ -9,8 +9,8 @@
   stream_server_address = "127.0.0.1"
   stream_server_port = "10010"
   enable_selinux = {{ .NodeConfig.SELinux }}
-  enable_unprivileged_ports = true
-  enable_unprivileged_icmp = true
+  enable_unprivileged_ports = {{ .EnableUnprivileged }}
+  enable_unprivileged_icmp = {{ .EnableUnprivileged }}
 {{- if .DisableCgroup}}
   disable_cgroup = true
 {{end}}
