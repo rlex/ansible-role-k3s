@@ -1,2 +1,5 @@
 [runsc_config]
   platform = "{{ k3s_gvisor_platform }}"
+{% for parameter, value in k3s_gvisor_config.items() %}
+  {{ parameter }} = "{{ value }}"
+{% endfor %}

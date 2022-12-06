@@ -18,6 +18,7 @@
 - [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
   - [Warning](#warning)
   - [Usage](#usage-1)
+  - [Additional configuration](#additional-configuration)
 - [To be done / some ideas](#to-be-done--some-ideas)
 
 <!-- /TOC -->
@@ -25,7 +26,7 @@
 ### Description
 Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
 I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries and some cloud VMs and so on.  
-It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, plus all of my custom stuff can be disabled via variables  
+It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, plus all of my custom stuff can be disabled via variables
 
 ### Requirements
 Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/), this role also needs systemd.
@@ -34,7 +35,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 | Variable name                 | Default value                    | Description                                                                                                                          |
 | ----------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                   | `v1.25.2+k3s1`                   | version of k3s to install                                                                                                            |
+| k3s_version                   | `v1.24.8+k3s1`                   | version of k3s to install                                                                                                            |
 | k3s_master                    | `false`                          | installs k3s master when true                                                                                                        |
 | k3s_agent                     | `false`                          | installs k3s agent when true                                                                                                         |
 | k3s_master_ip                 | see below                        | ip of master node                                                                                                                    |
@@ -53,6 +54,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_cronjob_prune_images      | `absent`                         | Configures cronjob that prunes unused images in containerd daily. Either `absent` or `present`                                       |
 | k3s_gvisor                    | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
 | k3s_gvisor_platform           | `ptrace`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor                                           |
+| k3s_gvisor_config             | ``                               | Sets additional options for gvisor runsc. See notes                                                                                  |
 | k3s_kubeconfig                | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
 | k3s_kubeconfig_server         | see below                        | specifies server for use in kubeconfig                                                                                               |
 | k3s_kubeconfig_context        | k3s                              | specifies context to use in kubeconfig                                                                                               |
@@ -90,7 +92,7 @@ On k3s_agent, just
 ```yaml
 k3s_agent: true
 ```
-Is usually enough  
+Is usually enough.  
 By default k3s_master_ip will be set to ansible_host from node in k3s_master group.  
 In case of multiple masters, it will be set to ansible_host of first node in k3s_master group.  
 In some cases you might want to redefine it (internal network, VPN network, etc). For that, you can use k3s_master_ip variable.
@@ -168,13 +170,13 @@ haproxy_backend:
           - verify none
 ```
 
-That will start haproxy listening on 127.0.0.1:16443 for connections to k8s masters. You can then redefine master IP and port for agents with 
+That will start haproxy listening on 127.0.0.1:16443 for connections to k8s masters. You can then redefine master IP and port for agents with
 ```yaml
 k3s_master_ip: 127.0.0.1
 k3s_master_port: 16443
 ```
 
-And now your connections are balanced between masters and protected in case of one or two masters will go down. One downside of that config is that it checks for reply 401 on /readyz endpoint, because since certain version of k8s (1.19 if i recall correctly) this endpoint requires authorization. So we just check that it works, not for actual "OK" reply and 200 HTTP code.   
+And now your connections are balanced between masters and protected in case of one or two masters will go down. One downside of that config is that it checks for reply 401 on /readyz endpoint, because since certain version of k8s (1.19 if i recall correctly) this endpoint requires authorization. So we just check that it works, not for actual "OK" reply and 200 HTTP code.  
 This proxy also works with initial agent join, so it's better to setup haproxy before installing k3s and then switching to HA config.
 It will also expose prometheus metrics on 0.0.0.0:1936/metrics - pay attention that this part (unlike webui) won't be protected by user and password, so adjust your firewall accordingly if needed!
 
@@ -238,11 +240,11 @@ k3s_kubeconfig: true
 k3s_kubeconfig_context: k3s-de1
 ```
 Role will perform following:
-1. Copy /etc/rancher/k3s/k3s.yml to ~/.kube/config-${ k3s_kubeconfig_context } 
+1. Copy /etc/rancher/k3s/k3s.yml to ~/.kube/config-${ k3s_kubeconfig_context }
 2. Patch it with your preferred context name specified in k3s_kubeconfig_context variable instead of stock "default"
 3. Patch it with proper server URL (by default, it will be ansible_host of first master node in group specified in variable k3s_master_group, with port 6443, aka "initial master"), but you can override it with k3s_kubeconfig_server
-4. Download resulting file to machine running ansible with path ~/.kube/config-${ k3s_kubeconfig_context }, in current example it will be ~/.kube/config-k3s-de1  
-And you can start using it right away.  
+4. Download resulting file to machine running ansible with path ~/.kube/config-${ k3s_kubeconfig_context }, in current example it will be ~/.kube/config-k3s-de1
+And you can start using it right away.
 However, if your master is configured differently (HA IP, Load balancer, etc), you might want to specify server manually. For this, you can use k3s_kubeconfig_server variable:
 ```
 k3s_kubeconfig_server: "master-ha.k8s.example.org:6443"
@@ -273,7 +275,7 @@ k3s_master_additional_config:
 ```
 
 ### Adding custom registries
-By using k3s_registries variable you can configure custom registries, both origins and mirrors. Format follows [official](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) config format.  
+By using k3s_registries variable you can configure custom registries, both origins and mirrors. Format follows [official](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) config format.
 Example:
 ```yaml
 k3s_registries:
@@ -325,9 +327,16 @@ k3s_kubelet_additional_config:
 #### Warning
 Due to how k3s works, you might need to sync [k3s built-in containerd config](https://github.com/k3s-io/k3s/blob/v1.25.2%2Bk3s1/pkg/agent/templates/templates_linux.go) according to k3s version you use. Config in this repo is synced with version specified in k3s_version variable.
 
+If you decide to customize containerd config, you will need to verify there is no double configuration present in containerd config - for example, [gvisor containerd guide](https://gvisor.dev/docs/user_guide/containerd/configuration/) have following block:
+```toml
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  runtime_type = "io.containerd.runc.v2"
+```
+which is already present in basic k3s containerd config
+
 #### Usage
-By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode.  
-It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:  
+By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode, to switch it to kvm set k3s_gvisor_platform to kvm.  
+It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:
 ```yaml
 apiVersion: node.k8s.io/v1
 kind: RuntimeClass
@@ -347,6 +356,18 @@ spec:
     - name: nginx
       image: nginx
 ```
+#### Additional configuration
+Role supports passing additional settings for gvisor using k3s_gvisor_config. For example, to enable host networking, use:
+```yaml
+k3s_gvisor_config:
+  network: host
+```
+Which will become
+```toml
+[runsc_config]
+  network = "host"
+```
+in gvisor config
 
 ### To be done / some ideas
   * Additional configuration for gvisor
