@@ -53,7 +53,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_registries                | ``                               | Configures custom registries, see [official docs](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) for format  |
 | k3s_cronjob_prune_images      | `absent`                         | Configures cronjob that prunes unused images in containerd daily. Either `absent` or `present`                                       |
 | k3s_gvisor                    | `false`                          | Installs [gvisor](https://gvisor.dev)                                                                                                |
-| k3s_gvisor_platform           | `ptrace`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor                                           |
+| k3s_gvisor_platform           | `systrap`                         | Selects [platform](https://gvisor.dev/docs/architecture_guide/platforms/) to use in gvisor                                           |
 | k3s_gvisor_config             | ``                               | Sets additional options for gvisor runsc. See notes                                                                                  |
 | k3s_kubeconfig                | false                            | Downloads kubeconfig to machine from which role was launched                                                                         |
 | k3s_kubeconfig_server         | see below                        | specifies server for use in kubeconfig                                                                                               |
@@ -335,7 +335,7 @@ If you decide to customize containerd config, you will need to verify there is n
 which is already present in basic k3s containerd config
 
 #### Usage
-By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use ptrace mode, to switch it to kvm set k3s_gvisor_platform to kvm.  
+By setting k3s_gvisor to true role will install gvisor - google's application kernel for container. By default it will use systrap mode, to switch it to kvm set k3s_gvisor_platform to kvm.  
 It will only install gvisor containerd plugin, you will need to create gvisor's RuntimeClass manually by applying following manifest for gvisor:
 ```yaml
 apiVersion: node.k8s.io/v1

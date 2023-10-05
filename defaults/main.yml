@@ -23,10 +23,10 @@ k3s_audit_policy: ""
 k3s_audit_webhook: ""
 k3s_cronjob_prune_images: absent
 k3s_gvisor: false
-k3s_gvisor_platform: ptrace
+k3s_gvisor_platform: systrap
 k3s_gvisor_config: {}
 #https://github.com/google/gvisor/tags
-k3s_gvisor_version: 20230627
+k3s_gvisor_version: 20230920
 k3s_sysctl_config: {}
 k3s_registries: ""
 k3s_kubeconfig: false
