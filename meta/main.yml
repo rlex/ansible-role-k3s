@@ -1,0 +1,22 @@
+galaxy_info:
+  role_name: k3s
+  author: Lex Rivera
+  description: ansible role for managing k3s
+  min_ansible_version: "2.4"
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - debian
+    - ubuntu
+    - kubernetes
+    - k8s
+    - k3s
+
+dependencies: []
