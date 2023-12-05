@@ -321,7 +321,7 @@ This action will happen on pre-configuration stage, before k3s installation.
 
 Example:
 ```yaml
-k3s_additional_configfiles:
+k3s_additional_config_files:
   - name: apiserver-tracing.yaml
     content: |
       apiVersion: apiserver.config.k8s.io/v1alpha1
