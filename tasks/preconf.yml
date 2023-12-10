@@ -121,3 +121,12 @@
   notify: restart k3s
   when:
     - not k3s_gvisor
+
+- name: Install python3-kubernetes
+  package:
+    name: python3-kubernetes
+    state: present
+  run_once: true
+  when:
+    - k3s_gvisor_create_runtimeclass or k3s_additional_manifests
+    - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']

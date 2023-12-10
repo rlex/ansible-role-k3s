@@ -1,3 +1,10 @@
+- name: Load kvm module
+  modprobe:
+    name: kvm
+    state: present
+    persistent: present
+  when: k3s_gvisor_platform == "kvm"
+
 - name: Generate containerd config
   template:
     src: "containerd.toml.tmpl.j2"
