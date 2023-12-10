@@ -21,6 +21,7 @@
   - [Warning](#warning)
   - [Usage](#usage-1)
   - [Additional configuration](#additional-configuration)
+- [Other ansible roles to check out](#other-ansible-roles-to-check-out)
 
 <!-- /TOC -->
 
@@ -427,3 +428,11 @@ Which will become
   network = "host"
 ```
 in gvisor config
+
+### Other ansible roles to check out
+
+If you got interested in that role, you might want to check out others that go nicely with my k3s one:
+
+[haproxy by Oafenweb](https://github.com/Oefenweb/ansible-haproxy) - used in example with haproxy
+[keepalived by Oafenweb](https://github.com/Oefenweb/ansible-keepalived) - used in example with keepalived
+[zot registy by me](https://github.com/rlex/ansible-role-zot) - for light on resources (but also very powerful) OCI container registry
