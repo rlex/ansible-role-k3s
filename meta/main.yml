@@ -1,5 +1,8 @@
+---
 galaxy_info:
   role_name: k3s
+  name: k3s
+  namespace: rlex
   author: Lex Rivera
   description: ansible role for managing k3s
   min_ansible_version: "2.4"

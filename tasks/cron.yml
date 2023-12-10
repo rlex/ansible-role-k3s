@@ -1,8 +1,9 @@
+---
 - name: Create image prune job
-  cron:
-    name: "Prune unused container images"
+  ansible.builtin.cron:
+    name: Prune unused container images
     special_time: daily
     user: root
     cron_file: k3s
-    job: "/usr/local/bin/crictl rmi --prune"
-    state: '{{ k3s_cronjob_prune_images }}'
+    job: /usr/local/bin/crictl rmi --prune
+    state: "{{ k3s_cronjob_prune_images }}"

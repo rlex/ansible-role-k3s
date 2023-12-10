@@ -1,3 +1,4 @@
+---
 - name: Create gvisor runtimeclass
   kubernetes.core.k8s:
     definition: |

@@ -1,26 +1,27 @@
-- import_tasks: preconf.yml
-- import_tasks: additional-configs.yml
-- import_tasks: gvisor.yml
+---
+- ansible.builtin.import_tasks: preconf.yml
+- ansible.builtin.import_tasks: additional-configs.yml
+- ansible.builtin.import_tasks: gvisor.yml
   when:
     - k3s_gvisor
-- import_tasks: install.yml
-- import_tasks: master.yml
+- ansible.builtin.import_tasks: install.yml
+- ansible.builtin.import_tasks: master.yml
   when:
-   - k3s_master
-   - k3s_master is defined
-   - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- import_tasks: additional-masters.yml
+    - k3s_master
+    - k3s_master is defined
+    - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+- ansible.builtin.import_tasks: additional-masters.yml
   when:
     - k3s_master
     - k3s_master is defined
     - inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- import_tasks: agent.yml
+- ansible.builtin.import_tasks: agent.yml
   when: k3s_agent and k3s_agent is defined
-- import_tasks: utils.yml
-- import_tasks: kubeconfig.yml
+- ansible.builtin.import_tasks: utils.yml
+- ansible.builtin.import_tasks: kubeconfig.yml
   when:
     - k3s_kubeconfig
     - k3s_master
     - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- import_tasks: cron.yml
-- import_tasks: kuberesources.yml
+- ansible.builtin.import_tasks: cron.yml
+- ansible.builtin.import_tasks: kuberesources.yml

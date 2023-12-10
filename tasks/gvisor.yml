@@ -1,41 +1,42 @@
+---
 - name: Load kvm module
-  modprobe:
+  community.general.modprobe:
     name: kvm
     state: present
     persistent: present
   when: k3s_gvisor_platform == "kvm"
 
 - name: Generate containerd config
-  template:
-    src: "containerd.toml.tmpl.j2"
-    dest: "/var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl"
+  ansible.builtin.template:
+    src: containerd.toml.tmpl.j2
+    dest: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart k3s
 
 - name: Download gvisor runsc
-  get_url:
+  ansible.builtin.get_url:
     url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
     dest: /usr/local/bin/runsc
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Download gvisor containerd-shim
-  get_url:
+  ansible.builtin.get_url:
     url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
     dest: /usr/local/bin/containerd-shim-runsc-v1
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 - name: Generate gvisor config
-  template:
-    src: "runsc.toml.j2"
-    dest: "/var/lib/rancher/k3s/agent/etc/containerd/runsc.toml"
+  ansible.builtin.template:
+    src: runsc.toml.j2
+    dest: /var/lib/rancher/k3s/agent/etc/containerd/runsc.toml
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart k3s
 #  when: k3s_gvisor_config

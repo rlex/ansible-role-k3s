@@ -1,59 +1,58 @@
 ---
 - name: Re-gather facts to get latest info
-  setup:
-
+  ansible.builtin.setup:
 - name: Enable IPv4 forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv4.ip_forward
     value: "1"
     state: present
-    reload: yes
+    reload: true
 
 - name: Enable IPv6 forwarding
-  sysctl:
+  ansible.posix.sysctl:
     name: net.ipv6.conf.all.forwarding
     value: "1"
     state: present
-    reload: yes
+    reload: true
 
 - name: Add br_netfilter to /etc/modules-load.d/
-  copy:
-    content: "br_netfilter"
+  ansible.builtin.copy:
+    content: br_netfilter
     dest: /etc/modules-load.d/br_netfilter.conf
-    mode: 0600
+    mode: "0600"
     owner: root
     group: root
   when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
 
 - name: Load br_netfilter
-  modprobe:
+  community.general.modprobe:
     name: br_netfilter
     state: present
   when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
 
 - name: Set bridge-nf-call-iptables (just to be sure)
-  sysctl:
+  ansible.posix.sysctl:
     name: "{{ items }}"
     value: "1"
     state: present
-    reload: yes
+    reload: true
   when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
   loop:
     - net.bridge.bridge-nf-call-iptables
     - net.bridge.bridge-nf-call-ip6tables
 
 - name: Add /usr/local/bin to sudo secure_path
-  lineinfile:
-    line: 'Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin'
-    regexp: "Defaults(\\s)*secure_path(\\s)*="
+  ansible.builtin.lineinfile:
+    line: Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+    regexp: Defaults(\s)*secure_path(\s)*=
     state: present
     insertafter: EOF
     path: /etc/sudoers
-    validate: 'visudo -cf %s'
+    validate: visudo -cf %s
   when: ansible_distribution in ['CentOS', 'Red Hat Enterprise Linux']
 
 - name: Mount bpffs
-  mount:
+  ansible.posix.mount:
     path: /sys/fs/bpf
     src: bpffs
     fstype: bpf
@@ -61,69 +60,69 @@
   when: k3s_mount_bpffs and k3s_mount_bpffs is defined
 
 - name: Install wireguard tools
-  package:
+  ansible.builtin.package:
     name: wireguard
     state: present
   when: k3s_server_flannel_backend == "wireguard"
 
 - name: Install additional packages
-  package:
+  ansible.builtin.package:
     name: "{{ k3s_additional_packages }}"
     state: present
   when: k3s_additional_packages
 
 # service module doesn't support globs. We need to do it old way, via loops
 - name: Enable additional services
-  service:
+  ansible.builtin.service:
     name: "{{ item }}"
     state: started
-    enabled: yes
+    enabled: true
   when: k3s_additional_services
   loop: "{{ k3s_additional_services }}"
 
 - name: Set additional sysctl settings
-  sysctl:
-    name: '{{ item.key }}'
-    value: '{{ item.value }}'
-    sysctl_set: yes
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
     sysctl_file: /etc/sysctl.d/99-k3s.conf
     state: present
-    reload: yes
-    ignoreerrors: yes
-  with_dict: '{{ k3s_sysctl_config }}'
+    reload: true
+    ignoreerrors: true
+  with_dict: "{{ k3s_sysctl_config }}"
 
 - name: Pre-create k3s config folders
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: root
     group: root
     state: directory
-    mode: 0600
+    mode: "0600"
   with_items:
     - /etc/rancher/k3s
     - /var/lib/rancher/k3s/agent/etc/containerd
 
 - name: Generate registries config
-  template:
-    src: "registries.yaml.j2"
-    dest: "/etc/rancher/k3s/registries.yaml"
+  ansible.builtin.template:
+    src: registries.yaml.j2
+    dest: /etc/rancher/k3s/registries.yaml
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart k3s
   when: k3s_registries
 
 - name: Delete k3s containerd config if gvisor is disabled
-  file:
-    src: "containerd.toml.tmpl.j2"
-    path: "/var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl"
+  ansible.builtin.file:
+    src: containerd.toml.tmpl.j2
+    path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     state: absent
   notify: restart k3s
   when:
     - not k3s_gvisor
 
 - name: Install python3-kubernetes
-  package:
+  ansible.builtin.package:
     name: python3-kubernetes
     state: present
   run_once: true
