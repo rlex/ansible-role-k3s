@@ -1,27 +1,39 @@
 ---
-- ansible.builtin.import_tasks: preconf.yml
-- ansible.builtin.import_tasks: additional-configs.yml
-- ansible.builtin.import_tasks: gvisor.yml
+- name: Run pre-configuration tasks
+  ansible.builtin.include_tasks: preconf.yml
+- name: Create additional kubernetes configs
+  ansible.builtin.include_tasks: additional-configs.yml
+- name: Run gvisor-related tasks
+  ansible.builtin.include_tasks: gvisor.yml
   when:
     - k3s_gvisor
-- ansible.builtin.import_tasks: install.yml
-- ansible.builtin.import_tasks: master.yml
+- name: Install k3s distribution
+  ansible.builtin.include_tasks: install.yml
+- name: Configure k3s master
+  ansible.builtin.include_tasks: master.yml
   when:
     - k3s_master
-    - k3s_master is defined
     - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- ansible.builtin.import_tasks: additional-masters.yml
+- name: Install additional master servers
+  ansible.builtin.include_tasks: additional-masters.yml
   when:
     - k3s_master
-    - k3s_master is defined
     - inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- ansible.builtin.import_tasks: agent.yml
-  when: k3s_agent and k3s_agent is defined
-- ansible.builtin.import_tasks: utils.yml
-- ansible.builtin.import_tasks: kubeconfig.yml
+- name: Install k3s workers
+  ansible.builtin.include_tasks: agent.yml
+  when:
+    - k3s_agent
+- name: Symlink k3s utils
+  ansible.builtin.include_tasks: utils.yml
+- name: Download kubeconfig to local machine
+  ansible.builtin.include_tasks: kubeconfig.yml
   when:
     - k3s_kubeconfig
     - k3s_master
     - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
-- ansible.builtin.import_tasks: cron.yml
-- ansible.builtin.import_tasks: kuberesources.yml
+- name: Create cronjobs
+  ansible.builtin.include_tasks: cron.yml
+  when:
+    - k3s_cronjob_prune_images == "present"
+- name: Deploy additional kubernetes objects
+  ansible.builtin.include_tasks: kuberesources.yml

@@ -1,0 +1,19 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    k3s_agent_extra_args:
+      - "--snapshotter=native"
+    k3s_master_extra_args:
+      - "--snapshotter=native"
+
+  pre_tasks:
+    - name: Update apt cache.
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+  roles:
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

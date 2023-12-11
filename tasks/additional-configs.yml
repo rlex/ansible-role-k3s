@@ -6,5 +6,5 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
   with_items: "{{ k3s_additional_config_files }}"
