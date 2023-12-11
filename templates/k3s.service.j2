@@ -4,7 +4,7 @@ Documentation=https://k3s.io
 After=network-online.target
 
 [Service]
-{% if inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
+{% if not k3s_initial_master %}
 Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token'] }}
 {% endif %}
 Type=notify

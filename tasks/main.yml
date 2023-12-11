@@ -13,12 +13,12 @@
   ansible.builtin.include_tasks: master.yml
   when:
     - k3s_master
-    - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+    - k3s_initial_master
 - name: Install additional master servers
   ansible.builtin.include_tasks: additional-masters.yml
   when:
     - k3s_master
-    - inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+    - not k3s_initial_master
 - name: Install k3s workers
   ansible.builtin.include_tasks: agent.yml
   when:
@@ -30,7 +30,7 @@
   when:
     - k3s_kubeconfig
     - k3s_master
-    - inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname']
+    - k3s_initial_master
 - name: Create cronjobs
   ansible.builtin.include_tasks: cron.yml
   when:
