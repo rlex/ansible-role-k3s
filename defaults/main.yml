@@ -20,6 +20,7 @@ k3s_additional_packages: []
 k3s_additional_services: []
 k3s_additional_config_files: {}
 k3s_additional_manifests: {}
+k3s_extra_env: ""
 k3s_agent_group: k3s_agent
 k3s_master_group: k3s_master
 k3s_audit_policy: ""

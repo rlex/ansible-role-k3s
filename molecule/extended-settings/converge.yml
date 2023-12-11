@@ -2,10 +2,12 @@
 - name: Converge
   hosts: all
   vars:
-    k3s_agent_extra_args:
-      - "--snapshotter=native"
-    k3s_master_extra_args:
-      - "--snapshotter=native"
+    k3s_agent_additional_config:
+      snapshotter: native
+    k3s_master_additional_config:
+      snapshotter: native
+    k3s_extra_env:
+      - INVOCATION_ID=
     # test adding additonal manifests
     k3s_additional_manifests:
       - name: kata
@@ -24,8 +26,6 @@
           kind: TracingConfiguration
           endpoint: 127.0.0.1:4317
           samplingRatePerMillion: 100
-    k3s_master_additional_config:
-      disable-cloud-controller: true
     k3s_kubelet_additional_config:
       - "cloud-provider=external"
     k3s_additional_packages:

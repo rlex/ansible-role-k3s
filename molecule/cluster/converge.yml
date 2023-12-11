@@ -2,11 +2,12 @@
 - name: Converge
   hosts: all
   vars:
-    k3s_internal_ip: "{{ ansible_default_ipv4.address }}"
-    k3s_agent_extra_args:
-      - "--snapshotter=native"
-    k3s_master_extra_args:
-      - "--snapshotter=native"
+    k3s_agent_additional_config:
+      snapshotter: native
+    k3s_master_additional_config:
+      snapshotter: native
+    k3s_extra_env:
+      - INVOCATION_ID=
 
   pre_tasks:
     - name: Update apt cache.

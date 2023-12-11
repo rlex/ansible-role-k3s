@@ -7,6 +7,12 @@ After=network-online.target
 {% if not k3s_initial_master %}
 Environment=K3S_TOKEN={{ hostvars[groups[k3s_master_group][0]]['k3s_node_token'] }}
 {% endif %}
+{% if k3s_extra_env %}
+{% for env in k3s_extra_env %}
+Environment={{ env }}
+{% endfor %}
+
+{% endif %}
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
