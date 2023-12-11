@@ -1,0 +1,1 @@
+k3s_initial_master: "{{ inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] }}"

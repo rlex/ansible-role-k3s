@@ -1,13 +1,13 @@
 {% if k3s_master %}
 #master only stuff
-{% if inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
+{% if k3s_initial_master and groups[k3s_master_group] | length > 1 %}
 cluster-init: true
 {% endif %}
 {% if k3s_master_disable is iterable and k3s_master_disable | length > 0 %}
 disable:
 {{ k3s_master_disable | to_nice_yaml(indent=2) }}
 {% endif %}
-{% if inventory_hostname != hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
+{% if not k3s_initial_master %}
 server: https://{{ k3s_master_ip }}:{{ k3s_master_port }}
 {% endif %}
 flannel-backend: '{{ k3s_flannel_backend }}'
