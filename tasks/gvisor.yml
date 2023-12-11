@@ -13,7 +13,7 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
 
 - name: Download gvisor runsc
   ansible.builtin.get_url:
@@ -38,5 +38,5 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
 #  when: k3s_gvisor_config

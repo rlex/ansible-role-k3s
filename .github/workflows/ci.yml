@@ -1,0 +1,92 @@
+name: CI
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+
+defaults:
+  run:
+    working-directory: 'rlex.k3s'
+
+jobs:
+
+  yaml-lint:
+    name: YAML lint
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v2
+        with:
+          path: 'rlex.k3s'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies
+        run: pip3 install yamllint
+
+      - name: Lint code.
+        run: |
+          yamllint .
+
+  ansible-lint:
+    name: Ansible lint
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v2
+        with:
+          path: 'rlex.k3s'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies
+        run: pip3 install ansible-lint
+
+      - name: Lint code
+        run: |
+          ansible-lint .
+
+  molecule:
+    name: Molecule
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - distro: ubuntu2204
+            scenario: single-node
+          - distro: debian11
+            scenario: single-node
+          - distro: ubuntu2204
+            scenario: cluster
+          - distro: debian11
+            scenario: cluster
+          - distro: ubuntu2204
+            scenario: extended-settings
+
+    steps:
+      - name: Checkout codebase
+        uses: actions/checkout@v2
+        with:
+          path: 'rlex.k3s'
+
+      - name: Setup python 3
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install test dependencies.
+        run: pip3 install ansible molecule molecule-plugins[docker] docker
+
+      - name: Run Molecule tests.
+        run: molecule test --scenario-name "${{ matrix.scenario }}"
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ${{ matrix.distro }}

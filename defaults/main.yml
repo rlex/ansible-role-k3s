@@ -6,6 +6,7 @@ k3s_master_port: 6443
 k3s_flannel_backend: vxlan
 k3s_master_disable: []
 k3s_master_extra_args: []
+k3s_mount_bpffs: false
 k3s_agent_extra_args: ""
 k3s_agent_additional_config: ""
 k3s_master_additional_config: ""
@@ -28,7 +29,7 @@ k3s_gvisor: false
 k3s_gvisor_platform: systrap
 k3s_gvisor_create_runtimeclass: true
 k3s_gvisor_config: {}
-#https://github.com/google/gvisor/tags
+# https://github.com/google/gvisor/tags
 k3s_gvisor_version: 20231113
 k3s_sysctl_config: {}
 k3s_registries: ""
@@ -36,7 +37,7 @@ k3s_kubeconfig: false
 k3s_kubeconfig_server: "{{ hostvars[groups[k3s_master_group][0]]['ansible_host'] | default(groups[k3s_master_group][0]) }}:{{ k3s_master_port }}"
 k3s_kubeconfig_context: k3s
 k3s_kubeconfig_target: "{{ k3s_kubeconfig_context }}"
-#backwards compatibility
+# backwards compatibility
 k3s_node_extra_args: "{{ k3s_agent_extra_args }}"
 k3s_node_external_ip: "{{ k3s_external_ip }}"
 k3s_node_ip: "{{ k3s_internal_ip }}"

@@ -3,7 +3,7 @@
 {% if inventory_hostname == hostvars[groups[k3s_master_group][0]]['inventory_hostname'] %}
 cluster-init: true
 {% endif %}
-{% if k3s_master_disable is defined and k3s_master_disable is iterable %}
+{% if k3s_master_disable is iterable and k3s_master_disable | length > 0 %}
 disable:
 {{ k3s_master_disable | to_nice_yaml(indent=2) }}
 {% endif %}

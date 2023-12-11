@@ -6,7 +6,7 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
 
 - name: Copy k3s service file
   ansible.builtin.template:
@@ -15,7 +15,7 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
 
 - name: Enable and start k3s (workers)
   ansible.builtin.systemd:

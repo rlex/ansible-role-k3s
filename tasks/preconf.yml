@@ -1,6 +1,7 @@
 ---
 - name: Re-gather facts to get latest info
   ansible.builtin.setup:
+
 - name: Enable IPv4 forwarding
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
@@ -109,15 +110,14 @@
     owner: root
     group: root
     mode: "0600"
-  notify: restart k3s
+  notify: Restart k3s
   when: k3s_registries
 
 - name: Delete k3s containerd config if gvisor is disabled
   ansible.builtin.file:
-    src: containerd.toml.tmpl.j2
     path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     state: absent
-  notify: restart k3s
+  notify: Restart k3s
   when:
     - not k3s_gvisor
 
