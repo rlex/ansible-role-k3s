@@ -25,7 +25,6 @@
             chain: OUTPUT
             protocol: tcp
             destination_ports:
-              - "80"
               - "443"
               - "5000"
             jump: DROP

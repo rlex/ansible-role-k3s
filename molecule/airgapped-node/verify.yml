@@ -7,8 +7,10 @@
     goss_arch_table:
       aarch64:
         arch: arm64
+        checksum: "sha256:fd76103dd6f373d48317b19542e4556cd27a06d415638561d410dfc139af19c8"
       x86_64:
         arch: amd64
+        checksum: "sha256:1c4f54b22fde9d4d5687939abc2606b0660a5d14a98afcd09b04b793d69acdc5"
     goss_bin: /usr/local/bin/goss
     goss_url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-{{ ansible_system | lower }}-{{ goss_arch }}"
     goss_test_directory: /tmp/molecule/goss
@@ -22,7 +24,7 @@
       ansible.builtin.get_url:
         url: "{{ goss_url }}"
         dest: "{{ goss_bin }}"
-#        sha256sum: "{{ goss_sha256sum }}"
+        checksum: "{{ goss_arch_table[ansible_architecture].checksum }}"
         mode: "u=rwx,go=rx"
       register: download_goss
       until: download_goss is succeeded
