@@ -20,8 +20,6 @@ provisioner:
   options:
     diff: true
   inventory:
-    all:
-      goss_tests_pause_seconds: 120
     group_vars:
       k3s_master:
         k3s_master: true

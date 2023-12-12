@@ -21,11 +21,45 @@ provisioner:
     diff: true
   inventory:
     all:
-      goss_tests_pause_seconds: 120
+      k3s_agent_additional_config:
+        snapshotter: native
+      k3s_master_additional_config:
+        snapshotter: native
+      k3s_extra_env:
+        - INVOCATION_ID=
+      # test adding additonal manifests
+      k3s_additional_manifests:
+        - name: kata
+          state: present
+          definition:
+            apiVersion: node.k8s.io/v1
+            kind: RuntimeClass
+            metadata:
+              name: kata
+            handler: kata
+      # test adding additional configfiles
+      k3s_additional_config_files:
+        - name: apiserver-tracing.yaml
+          content: |
+            apiVersion: apiserver.config.k8s.io/v1alpha1
+            kind: TracingConfiguration
+            endpoint: 127.0.0.1:4317
+            samplingRatePerMillion: 100
+      k3s_kubelet_additional_config:
+        - "cloud-provider=external"
+      k3s_additional_packages:
+        - open-iscsi
+      k3s_gvisor: true
+      k3s_gvisor_config:
+        network: host
+      k3s_server_disable:
+        - metrics-server
+        - traefik
     group_vars:
       k3s_master:
         k3s_master: true
       k3s_agent:
         k3s_agent: true
+
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}

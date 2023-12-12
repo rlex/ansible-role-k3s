@@ -69,11 +69,6 @@
           - "test-*.yml"
       register: test_files
 
-    - name: Wait set amount of time
-      ansible.builtin.pause:
-        seconds: "{{ goss_tests_pause_seconds | default('0') }}"
-        echo: false
-
     - name: Run verify
       when: test_files is succeeded
       block:
