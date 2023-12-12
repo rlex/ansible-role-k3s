@@ -58,17 +58,18 @@ provisioner:
   options:
     diff: true
   inventory:
-    all:
-      k3s_agent_additional_config:
-        snapshotter: native
-      k3s_master_additional_config:
-        snapshotter: native
-      k3s_extra_env:
-        - INVOCATION_ID=
     group_vars:
       k3s_master:
         k3s_master: true
+        k3s_master_additional_config:
+          snapshotter: native
+        k3s_extra_env:
+          - INVOCATION_ID=
       k3s_agent:
         k3s_agent: true
+        k3s_agent_additional_config:
+          snapshotter: native
+        k3s_extra_env:
+          - INVOCATION_ID=
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
