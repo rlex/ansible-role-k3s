@@ -61,14 +61,12 @@ jobs:
         include:
           - distro: ubuntu2204
             scenario: single-node
-          - distro: debian11
-            scenario: single-node
           - distro: ubuntu2204
-            scenario: cluster
-          - distro: debian11
             scenario: cluster
           - distro: ubuntu2204
             scenario: extended-settings
+          - distro: ubuntu2204
+            scenario: airgapped-node
 
     steps:
       - name: Checkout codebase

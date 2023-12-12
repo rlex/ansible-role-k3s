@@ -15,21 +15,63 @@
     mode: "0600"
   notify: Restart k3s
 
-- name: Download gvisor runsc
-  ansible.builtin.get_url:
-    url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
-    dest: /usr/local/bin/runsc
-    owner: root
-    group: root
-    mode: "0755"
+- name: Gvisor online installation
+  when:
+    - k3s_install_mode == "online"
+  block:
+    - name: Download gvisor runsc
+      ansible.builtin.get_url:
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
+        dest: /usr/local/bin/runsc
+        owner: root
+        group: root
+        mode: "0755"
 
-- name: Download gvisor containerd-shim
-  ansible.builtin.get_url:
-    url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
-    dest: /usr/local/bin/containerd-shim-runsc-v1
-    owner: root
-    group: root
-    mode: "0755"
+    - name: Download gvisor containerd-shim
+      ansible.builtin.get_url:
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
+        dest: /usr/local/bin/containerd-shim-runsc-v1
+        owner: root
+        group: root
+        mode: "0755"
+
+- name: Gvisor airgapped installation
+  when:
+    - k3s_install_mode == "airgap"
+  block:
+    - name: Download gvisor runsc
+      ansible.builtin.get_url:
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
+        dest: /tmp/runsc-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        mode: "0755"
+      delegate_to: localhost
+
+    - name: Download gvisor containerd-shim
+      ansible.builtin.get_url:
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
+        dest: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        mode: "0755"
+      delegate_to: localhost
+
+    - name: Transfer k3s binary to target system
+      ansible.builtin.copy:
+        src: /tmp/runsc-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        dest: /usr/local/bin/runsc
+        mode: "0755"
+        owner: root
+        group: root
+      notify:
+        - Restart k3s
+
+    - name: Transfer k3s binary to target system
+      ansible.builtin.copy:
+        src: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        dest: /usr/local/bin/containerd-shim-runsc-v1
+        mode: "0755"
+        owner: root
+        group: root
+      notify:
+        - Restart k3s
 
 - name: Generate gvisor config
   ansible.builtin.template:
