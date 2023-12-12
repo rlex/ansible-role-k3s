@@ -1,0 +1,13 @@
+addr:
+  tcp://master-1:80:
+    title: k3s-servicelb port on master-1 is reachable
+    reachable: true
+  tcp://master-2:80:
+    title: k3s-servicelb port on master-2 is reachable
+    reachable: true
+  tcp://master-3:80:
+    title: k3s-servicelb port on master-3 is reachable
+    reachable: true
+  tcp://node-1:80:
+    title: k3s-servicelb port on node-1 is reachable
+    reachable: true
