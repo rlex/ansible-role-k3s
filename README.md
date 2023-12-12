@@ -105,14 +105,14 @@ In some cases you might want to redefine it (internal network, VPN network, etc)
 
 #### Airgapped install
 For environments without internet access, you can use 
-```
+```yaml
 k3s_install_mode: airgap
 ```
 In that mode, role will download k3s binary and bootstrap images locally, and transfer them to target server from ansible runner.  
 It will also work for gvisor.  
 Please note that if you use [additional manifests installation](#adding-custom-kubernetes-manifests), you will need python3-kubernetes package installed on system - role assumes you have accessible OS distribution mirror configured on that airgapped node, otherwise installation will fail.  
 If you can't get that package installed on your system, do not use automatic installation of manifests and set
-```
+```yaml
 k3s_gvisor_create_runtimeclass: true
 ```
 
@@ -241,7 +241,7 @@ If everything is configured correctly, you should see 10.91.91.50 on vpn0:0 inte
 From now it's your choice how you want to configure HA - point agents to that floating IP, or install load-balancer on each master node and distribute requests between them.
 ### k3s and external ip
 Sometimes k3s fails to properly detect external and internal ip. For those, you can use this variables:
-```
+```yaml
 k3s_external_ip
 k3s_internal_ip
 ```
@@ -254,7 +254,7 @@ In which case external ip will be ansible default ip and node ip (internal-ip) w
 
 ### Getting kubeconfig file via role
 Role have ability to download kubeconfig file to machine from where ansible was run. To use it, set following variables:
-```
+```yaml
 k3s_kubeconfig: true
 k3s_kubeconfig_context: k3s-de1
 ```
@@ -265,7 +265,7 @@ Role will perform following:
 4. Download resulting file to machine running ansible with path ~/.kube/config-${ k3s_kubeconfig_context }, in current example it will be ~/.kube/config-k3s-de1
 And you can start using it right away.
 However, if your master is configured differently (HA IP, Load balancer, etc), you might want to specify server manually. For this, you can use k3s_kubeconfig_server variable:
-```
+```yaml
 k3s_kubeconfig_server: "master-ha.k8s.example.org:6443"
 ```
 Please note that role will not track changes of /etc/rancher/k3s/k3s.yml - if you redeploy your k3s cluster and need new kubeconfig, just delete existing local kubeconfig to get new one.
@@ -340,7 +340,7 @@ For RBAC, it will use k3s-generated /etc/rancher/k3s/k3s.yaml kubeconfig on same
 ### Setting sysctl
 
 Role also allows setting arbitrary sysctl settings using k3s_sysctl_config variable in dict format:
-```
+```yaml
 k3s_sysctl_configs:
   fs.inotify.max_user_instances: 128
 ```
@@ -348,7 +348,7 @@ Settings defined with that varible will be persisted in /etc/sysctl.d/99-k3s.con
 
 ### Setting kubelet arguments
 To pass arguments for kubelet, you can use k3s_kubelet_additional_config variable:
-```
+```yaml
 k3s_kubelet_additional_config:
   - "image-gc-high-threshold=40"
   - "image-gc-low-threshold=30"
@@ -385,7 +385,7 @@ Additionally, editing any of those files will trigger k3s restart
 ### Provisioning cluster using external cloud-controller-manager
 By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their [ccm](https://github.com/hetznercloud/hcloud-cloud-controller-manager)) you will need to specify following parameters **before** first cluster start, since cloud controller can't be changed after cluster deployment:
 
-```
+```yaml
 k3s_master_additional_config:
   disable-cloud-controller: true
 
