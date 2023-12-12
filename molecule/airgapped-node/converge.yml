@@ -30,3 +30,9 @@
             jump: DROP
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  post_tasks:
+    - name: Wait for servicelb port
+      ansible.builtin.wait_for:
+        port: 80
+        delay: 10
