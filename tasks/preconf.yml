@@ -77,5 +77,5 @@
     state: present
   run_once: true
   when:
-    - k3s_gvisor_create_runtimeclass or k3s_additional_manifests
+    - (k3s_gvisor_create_runtimeclass and k3s_gvisor) or k3s_additional_manifests
     - k3s_initial_master

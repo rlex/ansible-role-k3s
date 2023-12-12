@@ -1,0 +1,36 @@
+---
+role_name_check: 1
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    groups:
+      - k3s_master
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-ubuntu2204}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  options:
+    diff: true
+  inventory:
+    group_vars:
+      k3s_master:
+        k3s_master: true
+        k3s_install_mode: airgap
+        k3s_gvisor_create_runtimeclass: false
+        k3s_gvisor: true
+        k3s_master_additional_config:
+          snapshotter: native
+        k3s_extra_env:
+          - INVOCATION_ID=
+      k3s_agent:
+        k3s_agent: true
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}

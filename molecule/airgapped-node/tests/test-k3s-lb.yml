@@ -1,0 +1,4 @@
+addr:
+  tcp://instance:80:
+    title: k3s-servicelb port is reachable
+    reachable: true

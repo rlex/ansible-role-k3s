@@ -1,0 +1,32 @@
+---
+- name: Converge
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+    # we will block some output ports to emulate airgapped install
+    - name: Install iptables
+      ansible.builtin.apt:
+        name: iptables
+        state: present
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+    - name: Block access to (some) internet
+      block:
+        - name: Block access to certain ports
+          ansible.builtin.iptables:
+            chain: OUTPUT
+            protocol: tcp
+            destination_ports:
+              - "443"
+              - "5000"
+            jump: DROP
+  roles:
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

@@ -4,6 +4,7 @@
 - [Requirements](#requirements)
 - [Variables](#variables)
 - [Usage](#usage)
+  - [Airgapped install](#airgapped-install)
 - [Multi-master setup](#multi-master-setup)
   - [HA with haproxy](#ha-with-haproxy)
   - [HA with VRRP (keepalived)](#ha-with-vrrp-keepalived)
@@ -101,6 +102,19 @@ Is usually enough.
 By default k3s_master_ip will be set to ansible_host from node in k3s_master group.  
 In case of multiple masters, it will be set to ansible_host of first node in k3s_master group.  
 In some cases you might want to redefine it (internal network, VPN network, etc). For that, you can use k3s_master_ip variable.
+
+#### Airgapped install
+For environments without internet access, you can use 
+```
+k3s_install_mode: airgap
+```
+In that mode, role will download k3s binary and bootstrap images locally, and transfer them to target server from ansible runner.  
+It will also work for gvisor.  
+Please note that if you use [additional manifests installation](#adding-custom-kubernetes-manifests), you will need python3-kubernetes package installed on system - role assumes you have accessible OS distribution mirror configured on that airgapped node, otherwise installation will fail.  
+If you can't get that package installed on your system, do not use automatic installation of manifests and set
+```
+k3s_gvisor_create_runtimeclass: true
+```
 
 ### Multi-master setup
 When your k3s_master ansible inventory group have more than 1 host, role will detect it and switch to multi-master installation.  
