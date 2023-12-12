@@ -22,17 +22,18 @@
   - [Warning](#warning)
   - [Usage](#usage-1)
   - [Additional configuration](#additional-configuration)
+- [Tests](#tests)
 - [Other ansible roles to check out](#other-ansible-roles-to-check-out)
 
 <!-- /TOC -->
 
 ### Description
 Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
-I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries and some cloud VMs and so on.  
-It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, plus all of my custom stuff can be disabled via variables
+I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries, some cloud VMs and so on.  
+It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, and my customizations are disabled via variables by default.
 
 ### Requirements
-Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/), this role also needs systemd.
+Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installation/installation-requirements/), this role also needs systemd, so it should work on any modern distro.  
 
 ### Variables
 
@@ -195,7 +196,19 @@ k3s_master_ip: 127.0.0.1
 k3s_master_port: 16443
 ```
 
-And now your connections are balanced between masters and protected in case of one or two masters will go down. One downside of that config is that it checks for reply 401 on /readyz endpoint, because since certain version of k8s (1.19 if i recall correctly) this endpoint requires authorization. So we just check that it works, not for actual "OK" reply and 200 HTTP code.  
+And now your connections are balanced between masters and protected in case of one or two masters will go down. One downside of that config is that it checks for reply 401 on /readyz endpoint, because since certain version of k8s (1.19 if i recall correctly) this endpoint requires authorization. So you have 2 options here:
+  * Continue to rely on 401 check (not a good solution, since we're just checking for http up status)
+  * Add anonymous-auth=true to apiserver arguments: 
+      ```yaml
+        k3s_master_additional_config:
+          kube-apiserver-arg:
+          - "anonymous-auth=true"
+      ```
+    This will open /readyz, /healthz, /livez and /version endpoints to anonymous auth, and potentially expose version info. If that is concerning you, it's possible to patch system:public-info-viewer role to keep only /readyz, /healthz and /livez endpoint open:
+    ```
+    kubectl patch clusterrole system:public-info-viewer --type=json -p='[{"op": "replace", "path": "/rules/0/nonResourceURLs", "value":["/healthz","/livez","/readyz"]}]'
+    ```
+  
 This proxy also works with initial agent join, so it's better to setup haproxy before installing k3s and then switching to HA config.
 It will also expose prometheus metrics on 0.0.0.0:1936/metrics - pay attention that this part (unlike webui) won't be protected by user and password, so adjust your firewall accordingly if needed!
 
@@ -203,7 +216,7 @@ Of course you can use whatever you want - external cloud LB, nginx, anything, al
 
 #### HA with VRRP (keepalived)
 You can use [this keepalived role](https://github.com/Oefenweb/ansible-keepalived) if you have L2 networking available and can use VRRP for failover IP. In that case, you might need to add tls-san option in k3s_master_additional_config with your floating ip.
-For keepalived to work, following needs should be met:
+For keepalived to work, following conditions should be met:
   1) L2 networking must be available. Sadly, this is not a common case with cloud providers and most VPNs.
   2) Virtual IP must be in same subnet as interfaces on top of which they are used
 
@@ -442,6 +455,13 @@ Which will become
   network = "host"
 ```
 in gvisor config
+
+### Tests
+This role is continiously tested via ansible-molecule with github actions in on Ubuntu 22.04 and Rocky Linux 8 in different scenarios, including:
+  * single-node install
+  * single-node install with heavily customized config
+  * single-node airgapped install
+  * cluster install (3 masters, 1 node)
 
 ### Other ansible roles to check out
 
