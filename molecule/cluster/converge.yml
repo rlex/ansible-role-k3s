@@ -1,16 +1,9 @@
 ---
 - name: Converge
   hosts: all
-  vars:
-    k3s_agent_additional_config:
-      snapshotter: native
-    k3s_master_additional_config:
-      snapshotter: native
-    k3s_extra_env:
-      - INVOCATION_ID=
 
   pre_tasks:
-    - name: Update apt cache.
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
@@ -19,3 +12,9 @@
 
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  post_tasks:
+    - name: Wait for servicelb port
+      ansible.builtin.wait_for:
+        port: 80
+        delay: 10

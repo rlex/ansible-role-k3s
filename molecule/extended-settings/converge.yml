@@ -1,44 +1,9 @@
 ---
 - name: Converge
   hosts: all
-  vars:
-    k3s_agent_additional_config:
-      snapshotter: native
-    k3s_master_additional_config:
-      snapshotter: native
-    k3s_extra_env:
-      - INVOCATION_ID=
-    # test adding additonal manifests
-    k3s_additional_manifests:
-      - name: kata
-        state: present
-        definition:
-          apiVersion: node.k8s.io/v1
-          kind: RuntimeClass
-          metadata:
-            name: kata
-          handler: kata
-    # test adding additional configfiles
-    k3s_additional_config_files:
-      - name: apiserver-tracing.yaml
-        content: |
-          apiVersion: apiserver.config.k8s.io/v1alpha1
-          kind: TracingConfiguration
-          endpoint: 127.0.0.1:4317
-          samplingRatePerMillion: 100
-    k3s_kubelet_additional_config:
-      - "cloud-provider=external"
-    k3s_additional_packages:
-      - open-iscsi
-    k3s_gvisor: true
-    k3s_gvisor_config:
-      network: host
-    k3s_server_disable:
-      - metrics-server
-      - traefik
 
   pre_tasks:
-    - name: Update apt cache.
+    - name: Update apt cache
       ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 600
@@ -47,3 +12,9 @@
 
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  post_tasks:
+    - name: Wait for servicelb port
+      ansible.builtin.wait_for:
+        port: 80
+        delay: 10
