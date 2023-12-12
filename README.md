@@ -39,7 +39,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 | Variable name                  | Default value                    | Description                                                                                                                          |
 | ------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                    | `v1.28.4+k3s1`                   | version of k3s to install                                                                                                            |
+| k3s_version                    | `v1.28.4+k3s2`                   | version of k3s to install                                                                                                            |
 | k3s_master                     | `false`                          | installs k3s master when true                                                                                                        |
 | k3s_agent                      | `false`                          | installs k3s agent when true                                                                                                         |
 | k3s_master_ip                  | see below                        | ip of master node                                                                                                                    |
