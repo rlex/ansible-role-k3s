@@ -61,6 +61,8 @@ jobs:
         include:
           - distro: ubuntu2204
             scenario: single-node
+          - distro: rockylinux8
+            scenario: single-node
           - distro: ubuntu2204
             scenario: cluster
           - distro: ubuntu2204
