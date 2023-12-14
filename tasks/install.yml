@@ -1,8 +1,4 @@
 ---
-- name: Detect host system architecture
-  ansible.builtin.set_fact:
-    k3s_arch: "{{ k3s_arch_table[ansible_architecture].arch }}"
-
 - name: Install k3s in online mode
   when:
     - k3s_install_mode == "online"

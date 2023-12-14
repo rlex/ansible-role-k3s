@@ -6,3 +6,6 @@ k3s_arch_table:
   x86_64:
     arch: amd64
     suffix: ""
+
+k3s_arch: "{{ k3s_arch_table[ansible_architecture].arch }}"
+gvisor_arch: "{{ ansible_facts.architecture }}"

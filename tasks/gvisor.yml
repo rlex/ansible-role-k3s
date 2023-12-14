@@ -21,7 +21,7 @@
   block:
     - name: Download gvisor runsc
       ansible.builtin.get_url:
-        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ gvisor_arch }}/runsc
         dest: /usr/local/bin/runsc
         owner: root
         group: root
@@ -29,7 +29,7 @@
 
     - name: Download gvisor containerd-shim
       ansible.builtin.get_url:
-        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ gvisor_arch }}/containerd-shim-runsc-v1
         dest: /usr/local/bin/containerd-shim-runsc-v1
         owner: root
         group: root
@@ -41,21 +41,21 @@
   block:
     - name: Download gvisor runsc
       ansible.builtin.get_url:
-        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/runsc
-        dest: /tmp/runsc-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ gvisor_arch }}/runsc
+        dest: /tmp/runsc-{{ k3s_gvisor_version }}-{{ gvisor_arch }}
         mode: "0755"
       delegate_to: localhost
 
     - name: Download gvisor containerd-shim
       ansible.builtin.get_url:
-        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ ansible_facts.architecture }}/containerd-shim-runsc-v1
-        dest: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        url: https://storage.googleapis.com/gvisor/releases/release/{{ k3s_gvisor_version }}/{{ gvisor_arch }}/containerd-shim-runsc-v1
+        dest: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ gvisor_arch }}
         mode: "0755"
       delegate_to: localhost
 
     - name: Transfer k3s binary to target system
       ansible.builtin.copy:
-        src: /tmp/runsc-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        src: /tmp/runsc-{{ k3s_gvisor_version }}-{{ gvisor_arch }}
         dest: /usr/local/bin/runsc
         mode: "0755"
         owner: root
@@ -65,7 +65,7 @@
 
     - name: Transfer k3s binary to target system
       ansible.builtin.copy:
-        src: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ ansible_facts.architecture }}
+        src: /tmp/containerd-shim-runsc-v1-{{ k3s_gvisor_version }}-{{ gvisor_arch }}
         dest: /usr/local/bin/containerd-shim-runsc-v1
         mode: "0755"
         owner: root
