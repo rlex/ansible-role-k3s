@@ -22,7 +22,6 @@
     state: present
   when: k3s_additional_packages
 
-# service module doesn't support globs. We need to do it old way, via loops
 - name: Enable additional services
   ansible.builtin.service:
     name: "{{ item }}"
@@ -61,15 +60,29 @@
     group: root
     mode: "0600"
   notify: Restart k3s
-  when: k3s_registries
+  when:
+    - k3s_registries
 
-- name: Delete k3s containerd config if gvisor is disabled
+- name: Generate containerd config
+  ansible.builtin.template:
+    src: "{{ k3s_containerd_template }}"
+    dest: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart k3s
+  when:
+    - k3s_gvisor
+    - k3s_containerd_template == "containerd.toml.tmpl.j2"
+
+- name: Delete k3s containerd config if gvisor is disabled and no custom config is present
   ansible.builtin.file:
     path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     state: absent
   notify: Restart k3s
   when:
     - not k3s_gvisor
+    - k3s_containerd_template == "containerd.toml.tmpl.j2"
 
 - name: Install python3-kubernetes
   ansible.builtin.package:

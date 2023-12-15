@@ -18,8 +18,9 @@
 - [Setting kubelet arguments](#setting-kubelet-arguments)
 - [Creating additional configs](#creating-additional-configs)
 - [Provisioning cluster using external cloud-controller-manager](#provisioning-cluster-using-external-cloud-controller-manager)
+- [Customizing containerd config template](#customizing-containerd-config-template)
 - [Sandboxing workloads with gvisor](#sandboxing-workloads-with-gvisor)
-  - [Warning](#warning)
+  - [Warning about containerd config template](#warning-about-containerd-config-template)
   - [Usage](#usage-1)
   - [Additional configuration](#additional-configuration)
 - [Tests](#tests)
@@ -406,12 +407,20 @@ k3s_kubelet_additional_config:
   - "cloud-provider=external"
 ```
 
+### Customizing containerd config template
+If you use different version of k3s and/or you want to customize containerd template, you can override path to containerd template with k3s_containerd_template variable, for example: 
+```
+k3s_containerd_template: "{{ inventory_dir }}/files/k3s/containerd.toml.tmpl.j2"
+```
+In that case, role will look for containerd template in files/k3s/containerd.toml.tmpl.j2 inside your inventory folder you defined in ansible.cfg  
+
 ### Sandboxing workloads with gvisor
 
-#### Warning
-Due to how k3s works, you might need to sync [k3s built-in containerd config](https://github.com/k3s-io/k3s/blob/v1.25.2%2Bk3s1/pkg/agent/templates/templates_linux.go) according to k3s version you use. Config in this repo is synced with version specified in k3s_version variable.
+#### Warning about containerd config template
+Due to how k3s works, you might need to sync [k3s built-in containerd config](https://github.com/k3s-io/k3s/blob/v1.25.2%2Bk3s1/pkg/agent/templates/templates_linux.go) according to k3s version you use. Config in this repo is synced with version specified in k3s_version variable.  
+You can also use [custom containerd config template](#customizing-containerd-config-template) here.  
 
-If you decide to customize containerd config, you will need to verify there is no double configuration present in containerd config - for example, [gvisor containerd guide](https://gvisor.dev/docs/user_guide/containerd/configuration/) have following block:
+If you decide to customize containerd config, you will need to verify there is no double configuration present - for example, [gvisor containerd guide](https://gvisor.dev/docs/user_guide/containerd/configuration/) have following block:
 ```toml
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
   runtime_type = "io.containerd.runc.v2"
