@@ -6,15 +6,6 @@
     persistent: present
   when: k3s_gvisor_platform == "kvm"
 
-- name: Generate containerd config
-  ansible.builtin.template:
-    src: containerd.toml.tmpl.j2
-    dest: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-    owner: root
-    group: root
-    mode: "0600"
-  notify: Restart k3s
-
 - name: Gvisor online installation
   when:
     - k3s_install_mode == "online"
