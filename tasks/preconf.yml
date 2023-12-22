@@ -18,17 +18,17 @@
 
 - name: Install additional packages
   ansible.builtin.package:
-    name: "{{ k3s_additional_packages }}"
+    name: "{{ k3s_extra_packages }}"
     state: present
-  when: k3s_additional_packages
+  when: k3s_extra_packages
 
 - name: Enable additional services
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
     enabled: true
-  when: k3s_additional_services
-  loop: "{{ k3s_additional_services }}"
+  when: k3s_extra_services
+  loop: "{{ k3s_extra_services }}"
 
 - name: Set additional sysctl settings
   ansible.posix.sysctl:
@@ -90,5 +90,5 @@
     state: present
   run_once: true
   when:
-    - (k3s_gvisor_create_runtimeclass and k3s_gvisor) or k3s_additional_manifests
+    - (k3s_gvisor_create_runtimeclass and k3s_gvisor) or k3s_extra_manifests
     - k3s_initial_master

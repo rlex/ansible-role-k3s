@@ -31,7 +31,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 | k3s_systemd_dir                | /etc/systemd/system                  | Directory for systemd unit file                                                                                                      |
 | k3s_master                     | `false`                              | installs k3s master when true                                                                                                        |
 | k3s_agent                      | `false`                              | installs k3s agent when true                                                                                                         |
-| k3s_master_ip                  | first node in k3s_master_group group | ip/hostname of master node                                                                                                           |
+| k3s_master_ip                  | first node in k3s_master_group group | ip/hostname of master node                                                                                                           |  |
 | k3s_master_port                | `6443`                               | port of masterserver                                                                                                                 |
 | k3s_install_mode               | `online`                             | k3s install mode - online or airgap                                                                                                  |
 | k3s_flannel_backend            | `vxlan`                              | k3s flannel backend to use. Set to none to disable flannel                                                                           |

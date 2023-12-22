@@ -74,7 +74,7 @@ And now your connections are balanced between masters and protected in case of o
   * Continue to rely on 401 check (not a good solution, since we're just checking for http up status)
   * Add ```anonymous-auth=true``` to apiserver arguments: 
       ```yaml
-        k3s_master_additional_config:
+        k3s_master_extra_config:
           kube-apiserver-arg:
           - "anonymous-auth=true"
       ```

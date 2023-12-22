@@ -26,6 +26,6 @@
   run_once: true
   delegate_to: "{{ hostvars[groups[k3s_master_group][0]]['inventory_hostname'] }}"
   when:
-    - k3s_additional_manifests is iterable
-    - k3s_additional_manifests | length > 0
-  loop: "{{ k3s_additional_manifests | list }}"
+    - k3s_extra_manifests is iterable
+    - k3s_extra_manifests | length > 0
+  loop: "{{ k3s_extra_manifests | list }}"

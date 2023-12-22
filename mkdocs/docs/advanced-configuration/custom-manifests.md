@@ -1,10 +1,10 @@
 # Adding custom kubernetes manifests
 
-If you need to create additional kubernetes objects after cluster creation, you can use k3s_additional_manifests variable.<br> 
+If you need to create additional kubernetes objects after cluster creation, you can use k3s_extra_manifests variable.<br> 
 Example with all possible parameters:
 
 ```yaml
-k3s_additional_manifests:
+k3s_extra_manifests:
   - name: kata
     state: present
     definition:

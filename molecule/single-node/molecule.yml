@@ -23,7 +23,7 @@ provisioner:
     group_vars:
       k3s_master:
         k3s_master: true
-        k3s_master_additional_config:
+        k3s_master_extra_config:
           snapshotter: native
         k3s_extra_env:
           - INVOCATION_ID=

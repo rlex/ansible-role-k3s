@@ -11,15 +11,15 @@ disable:
 server: https://{{ k3s_master_ip }}:{{ k3s_master_port }}
 {% endif %}
 flannel-backend: '{{ k3s_flannel_backend }}'
-{% if k3s_master_additional_config is defined and k3s_master_additional_config | length > 0 %}
-{{ k3s_master_additional_config | to_nice_yaml }}
+{% if k3s_master_extra_config is defined and k3s_master_extra_config | length > 0 %}
+{{ k3s_master_extra_config | to_nice_yaml }}
 {% endif %}
 {% endif %}
 {% if k3s_agent %}
 #agent only stuff
 server: https://{{ k3s_master_ip }}:{{ k3s_master_port }}
-{% if k3s_agent_additional_config is defined and k3s_agent_additional_config | length > 0 %}
-{{ k3s_agent_additional_config | to_nice_yaml }}
+{% if k3s_agent_extra_config is defined and k3s_agent_extra_config | length > 0 %}
+{{ k3s_agent_extra_config | to_nice_yaml }}
 {% endif %}
 #end of agent only stuff
 {% endif %}
@@ -31,7 +31,7 @@ node-external-ip: {{ k3s_external_ip }}
 node-ip: {{ k3s_internal_ip }}
 {% endif %}
 #generic kubelet args
-{% if k3s_kubelet_additional_config is defined and k3s_kubelet_additional_config | length > 0 %}
+{% if k3s_kubelet_extra_config is defined and k3s_kubelet_extra_config | length > 0 %}
 kubelet-arg:
-{{ k3s_kubelet_additional_config | to_nice_yaml(indent=2) }}
+{{ k3s_kubelet_extra_config | to_nice_yaml(indent=2) }}
 {% endif %}
