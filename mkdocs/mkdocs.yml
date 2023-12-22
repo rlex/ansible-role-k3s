@@ -9,6 +9,9 @@ theme:
     accent: indigo
 plugins:
   - search
+
+repo_url: https://github.com/rlex/ansible-role-k3s
+
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
