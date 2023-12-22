@@ -34,6 +34,8 @@ k3s_gvisor_create_runtimeclass: true
 k3s_gvisor_config: {}
 # https://github.com/google/gvisor/tags
 k3s_gvisor_version: 20231218
+k3s_crun: false
+k3s_crun_version: 1.12
 k3s_sysctl_config: {}
 k3s_registries: ""
 k3s_kubeconfig: false
