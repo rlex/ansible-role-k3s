@@ -40,18 +40,3 @@ k3s_kubeconfig: false
 k3s_kubeconfig_server: "{{ hostvars[groups[k3s_master_group][0]]['ansible_host'] | default(groups[k3s_master_group][0]) }}:{{ k3s_master_port }}"
 k3s_kubeconfig_context: k3s
 k3s_kubeconfig_target: "{{ k3s_kubeconfig_context }}"
-# backwards compatibility
-k3s_additional_packages: "{{ k3s_extra_packages }}"
-k3s_additional_services: "{{ k3s_extra_services }}"
-k3s_additional_config_files: "{{ k3s_extra_config_files }}"
-k3s_additional_manifests: "{{ k3s_extra_manifests }}"
-k3s_agent_additional_config: "{{ k3s_agent_extra_config }}"
-kes_agent_additional_config: "{{ k3s_agent_extra_config }}"
-k3s_kubelet_additional_config: "{{ k3s_kubelet_extra_config }}"
-k3s_node_extra_args: "{{ k3s_agent_extra_args }}"
-k3s_node_external_ip: "{{ k3s_external_ip }}"
-k3s_node_ip: "{{ k3s_internal_ip }}"
-k3s_server_flannel_backend: "{{ k3s_flannel_backend }}"
-k3s_server_disable: "{{ k3s_master_disable }}"
-k3s_server_extra_args: "{{ k3s_master_extra_args }}"
-k3s_node: "{{ k3s_agent }}"
