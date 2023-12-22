@@ -7,6 +7,10 @@
   ansible.builtin.include_tasks: gvisor.yml
   when:
     - k3s_gvisor
+- name: Run crun-related tasks
+  ansible.builtin.include_tasks: crun.yml
+  when:
+    - k3s_crun
 - name: Install k3s distribution
   ansible.builtin.include_tasks: install.yml
 - name: Configure k3s master

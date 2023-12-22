@@ -48,6 +48,7 @@ provisioner:
         k3s_additional_packages:
           - open-iscsi
         k3s_gvisor: true
+        k3s_crun: true
         k3s_gvisor_config:
           network: host
         k3s_master_disable:
