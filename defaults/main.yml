@@ -9,24 +9,22 @@ k3s_master_disable: []
 k3s_master_extra_args: []
 k3s_mount_bpffs: false
 k3s_agent_extra_args: ""
-k3s_agent_additional_config: ""
-k3s_master_additional_config: ""
-k3s_kubelet_additional_config: ""
+k3s_agent_extra_config: ""
+k3s_master_extra_config: ""
+k3s_kubelet_extra_config: ""
 k3s_master: false
 k3s_agent: false
 k3s_bpffs: false
 k3s_external_ip: ""
 k3s_internal_ip: ""
-k3s_additional_packages: []
-k3s_additional_services: []
-k3s_additional_config_files: {}
-k3s_additional_manifests: {}
+k3s_extra_packages: []
+k3s_extra_services: []
+k3s_extra_config_files: {}
+k3s_extra_manifests: {}
 k3s_extra_env: ""
 k3s_containerd_template: containerd.toml.tmpl.j2
 k3s_agent_group: k3s_agent
 k3s_master_group: k3s_master
-k3s_audit_policy: ""
-k3s_audit_webhook: ""
 k3s_cronjob_prune_images: absent
 k3s_gvisor: false
 k3s_gvisor_platform: systrap
@@ -43,6 +41,13 @@ k3s_kubeconfig_server: "{{ hostvars[groups[k3s_master_group][0]]['ansible_host']
 k3s_kubeconfig_context: k3s
 k3s_kubeconfig_target: "{{ k3s_kubeconfig_context }}"
 # backwards compatibility
+k3s_additional_packages: "{{ k3s_extra_packages }}"
+k3s_additional_services: "{{ k3s_extra_services }}"
+k3s_additional_config_files: "{{ k3s_extra_config_files }}"
+k3s_additional_manifests: "{{ k3s_extra_manifests }}"
+k3s_agent_additional_config: "{{ k3s_agent_extra_config }}"
+kes_agent_additional_config: "{{ k3s_agent_extra_config }}"
+k3s_kubelet_additional_config: "{{ k3s_kubelet_extra_config }}"
 k3s_node_extra_args: "{{ k3s_agent_extra_args }}"
 k3s_node_external_ip: "{{ k3s_external_ip }}"
 k3s_node_ip: "{{ k3s_internal_ip }}"

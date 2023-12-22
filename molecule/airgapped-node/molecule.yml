@@ -26,7 +26,7 @@ provisioner:
         k3s_install_mode: airgap
         k3s_gvisor_create_runtimeclass: false
         k3s_gvisor: true
-        k3s_master_additional_config:
+        k3s_master_extra_config:
           snapshotter: native
         k3s_extra_env:
           - INVOCATION_ID=
