@@ -1,4 +1,4 @@
-#### Airgapped install
+# Airgapped installation
 For environments without internet access, you can use
 ```yaml
 k3s_install_mode: airgap

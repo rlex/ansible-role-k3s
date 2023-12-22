@@ -1,12 +1,14 @@
 ### Description
 Ansible role for managing rancher [k3s](https://k3s.io), lightweight, cncf-certified kubernetes distribution.  
-I use it for my personal kubernetes installs/test labs running on bunch of cheap KVM VPSes, some raspberries, some cloud VMs and so on.  
-It's tailored for my needs (ie gvisor and etc), but it's still very generic and can be used anywhere, and my customizations are disabled via variables by default.
+This role can be used to install simple single-node or multi-master HA clusters.  
+It can be used to manage multiple k3s clusters in single ansible inventory.  
+It's also heavily customizable for almost any purpose - you can edit pretty much any k3s setting.  
+It can install gvisor, additional host dependencies, load specific kernel modules, adjust k3s-related sysctl settings and so on.  
 
  <!-- TOC -->
 
 - [Description](#description)
-- [Docs:](#docs)
+- [Documentation](#documentation)
 - [Requirements](#requirements)
 - [Variables](#variables)
 - [Tests](#tests)
@@ -14,7 +16,7 @@ It's tailored for my needs (ie gvisor and etc), but it's still very generic and 
 
 <!-- /TOC -->
 
-### Docs: 
+### Documentation
 
 Detailed docs are available [here](https://rlex.github.io/ansible-role-k3s/)
 
@@ -25,7 +27,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 | Variable name                  | Default value                    | Description                                                                                                                          |
 | ------------------------------ | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                    | `v1.28.4+k3s2`                   | version of k3s to install                                                                                                            |
+| k3s_version                    | `v1.29.0+k3s1`                   | version of k3s to install                                                                                                            |
 | k3s_master                     | `false`                          | installs k3s master when true                                                                                                        |
 | k3s_agent                      | `false`                          | installs k3s agent when true                                                                                                         |
 | k3s_master_ip                  | see below                        | ip of master node                                                                                                                    |
@@ -61,7 +63,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 ### Tests
 This role is continiously tested via ansible-molecule with github actions in on Ubuntu 22.04 and Rocky Linux 8 in different scenarios, including:
   * single-node install
-  * single-node install with heavily customized config
+  * single-node install with customized config
   * single-node airgapped install
   * cluster install (3 masters, 1 node)
 
@@ -69,6 +71,6 @@ This role is continiously tested via ansible-molecule with github actions in on 
 
 If you got interested in that role, you might want to check out others that go nicely with my k3s one:
 
-[haproxy by Oafenweb](https://github.com/Oefenweb/ansible-haproxy) - used in example with haproxy
-[keepalived by Oafenweb](https://github.com/Oefenweb/ansible-keepalived) - used in example with keepalived
-[zot registy by me](https://github.com/rlex/ansible-role-zot) - for light on resources (but also very powerful) OCI container registry
+* [haproxy by Oafenweb](https://github.com/Oefenweb/ansible-haproxy) - used in example with haproxy  
+* [keepalived by Oafenweb](https://github.com/Oefenweb/ansible-keepalived) - used in example with keepalived  
+* [zot registy by me](https://github.com/rlex/ansible-role-zot) - for light on resources (but also very powerful) OCI container registry  

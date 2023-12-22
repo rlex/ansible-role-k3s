@@ -1,5 +1,5 @@
 
-### Getting kubeconfig file via role
+# Getting kubeconfig via role
 Role have ability to download kubeconfig file to machine from where ansible was run. To use it, set following variables:
 ```yaml
 k3s_kubeconfig: true

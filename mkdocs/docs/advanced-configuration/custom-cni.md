@@ -1,4 +1,4 @@
-### Using custom network plugin
+# Using custom network plugin
 If you want to use something different and self-managed than default flannel you can set flannel backend to none, which will remove flannel completely:
 ```yaml
 k3s_flannel_backend: none

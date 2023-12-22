@@ -1,4 +1,4 @@
-### k3s and external ip
+# k3s and external ip
 Sometimes k3s fails to properly detect external and internal ip. For those, you can use ```k3s_external_ip``` and ```k3s_internal_ip``` variables, for example:
 Ie:
 ```yaml

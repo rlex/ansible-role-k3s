@@ -1,4 +1,4 @@
-#### HA with VRRP (keepalived)
+# HA with VRRP (keepalived)
 You can use [this keepalived role](https://github.com/Oefenweb/ansible-keepalived) if you have L2 networking available and can use VRRP for failover IP. In that case, you might need to add tls-san option in k3s_master_additional_config with your floating ip.
 For keepalived to work, following conditions should be met:
   1) L2 networking must be available. Sadly, this is not a common case with cloud providers and most VPNs.

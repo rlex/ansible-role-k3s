@@ -1,5 +1,5 @@
 
-### Adding custom registries
+# Adding custom registries
 By using k3s_registries variable you can configure custom registries, both origins and mirrors. Format follows [official](https://rancher.com/docs/k3s/latest/en/installation/private-registry/) config format.
 Example:
 ```yaml

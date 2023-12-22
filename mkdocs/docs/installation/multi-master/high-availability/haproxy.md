@@ -1,4 +1,4 @@
-#### HA with haproxy
+# HA with haproxy
 Using [This haproxy role](https://github.com/Oefenweb/ansible-haproxy). I run my cluster on top of L3 vpn so i can't use L2, so i just install haproxy on each node, point haproxy to all masters, and point agents to localhost haproxy. Dirty, but works. Example config:
 
 ```yaml

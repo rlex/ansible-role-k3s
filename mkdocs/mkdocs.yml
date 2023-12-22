@@ -1,7 +1,7 @@
 site_name: ansible k3s role
 theme:
   name: material
-  features: 
+  features:
     - content.code.copy
     - content.code.select
   palette:
