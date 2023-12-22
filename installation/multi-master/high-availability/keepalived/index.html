@@ -846,7 +846,7 @@
 
 
 <h1 id="ha-with-vrrp-keepalived">HA with VRRP (keepalived)</h1>
-<p>You can use <a href="https://github.com/Oefenweb/ansible-keepalived">this keepalived role</a> if you have L2 networking available and can use VRRP for failover IP. In that case, you might need to add tls-san option in k3s_master_additional_config with your floating ip.
+<p>You can use <a href="https://github.com/Oefenweb/ansible-keepalived">this keepalived role</a> if you have L2 networking available and can use VRRP for failover IP. In that case, you might need to add tls-san option in k3s_master_extra_config with your floating ip.
 For keepalived to work, following conditions should be met:
   1) L2 networking must be available. Sadly, this is not a common case with cloud providers and most VPNs.
   2) Virtual IP must be in same subnet as interfaces on top of which they are used</p>
@@ -873,7 +873,7 @@ for backing masters:
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;10.91.91.50</span><span class="nv"> </span><span class="s">dev</span><span class="nv"> </span><span class="s">vpn0</span><span class="nv"> </span><span class="s">label</span><span class="nv"> </span><span class="s">vpn0:0&quot;</span>
 </span></code></pre></div>
 And in k3s configuration:
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">k3s_master_additional_config</span><span class="p">:</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">k3s_master_extra_config</span><span class="p">:</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">tls-san</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.91.91.50</span>
 </span></code></pre></div></p>
 <p>If everything is configured correctly, you should see 10.91.91.50 on vpn0:0 interface on master-1 node. Try stopping keepalived on master-1 and see how IP disappears from master-1 and appears on master-2.<br />

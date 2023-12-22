@@ -845,9 +845,9 @@
 
 <h1 id="provisioning-cluster-using-external-cloud-controller-manager">Provisioning cluster using external cloud-controller-manager</h1>
 <p>By default, cluster will be installed with k3s "dummy" cloud controller manager. If you deploy your k3s cluster on supported cloud platform (for example hetzner with their <a href="https://github.com/hetznercloud/hcloud-cloud-controller-manager">ccm</a>) you will need to specify following parameters <strong>before</strong> first cluster start, since cloud controller can't be changed after cluster deployment:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">k3s_master_additional_config</span><span class="p">:</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">k3s_master_extra_config</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">disable-cloud-controller</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">k3s_kubelet_additional_config</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">k3s_kubelet_extra_config</span><span class="p">:</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;cloud-provider=external&quot;</span>
 </span></code></pre></div>
 

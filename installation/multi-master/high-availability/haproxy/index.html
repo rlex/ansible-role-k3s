@@ -917,7 +917,7 @@
 <ul>
 <li>Continue to rely on 401 check (not a good solution, since we're just checking for http up status)</li>
 <li>Add <code>anonymous-auth=true</code> to apiserver arguments: 
-      <div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">k3s_master_additional_config</span><span class="p">:</span>
+      <div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="w">  </span><span class="nt">k3s_master_extra_config</span><span class="p">:</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="nt">kube-apiserver-arg</span><span class="p">:</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;anonymous-auth=true&quot;</span>
 </span></code></pre></div>

@@ -844,12 +844,13 @@
 
 
 <h1 id="creating-additional-kubernetes-configs">Creating additional kubernetes configs</h1>
-<p>Sometimes you need to create additional config files. For example, you want to trace kubelet, which requires separate config file for tracing configuration.<br />
-Variable <code>k3s_additional_config_files</code> will take care of that.<br />
+<p>Sometimes you need to create additional config files for adding to kubernetes installation.<br />
+For example, you want to trace kubelet, which requires separate config file for tracing configuration.<br />
+Variable <code>k3s_extra_config_files</code> will take care of that.<br />
 All additional config files will go to <code>/etc/rancher/k3s</code> directory, with name specified in name block and with content specified in content.<br />
 This action will happen on pre-configuration stage, before k3s installation.  </p>
 <p>Example:
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">k3s_additional_config_files</span><span class="p">:</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">k3s_extra_config_files</span><span class="p">:</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apiserver-tracing.yaml</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">      </span><span class="no">apiVersion: apiserver.config.k8s.io/v1alpha1</span>
