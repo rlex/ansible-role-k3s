@@ -3,9 +3,9 @@
   when:
     - k3s_install_mode == "online"
   block:
-    - name: Download gvisor runsc
+    - name: Download crun binary
       ansible.builtin.get_url:
-        url: https://github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ k3s_arch }}
+        url: https://github.com/containers/crun/releases/download/{{ k3s_crun_version }}/crun-{{ k3s_crun_version }}-linux-{{ k3s_arch }}
         dest: /usr/local/bin/crun
         owner: root
         group: root
@@ -17,7 +17,7 @@
   block:
     - name: Download crun binary to localhost
       ansible.builtin.get_url:
-        url: https://github.com/containers/crun/releases/download/{{ crun_version }}/crun-{{ crun_version }}-linux-{{ k3s_arch }}
+        url: https://github.com/containers/crun/releases/download/{{ k3s_crun_version }}/crun-{{ crun_version }}-linux-{{ k3s_arch }}
         dest: /tmp/crun-{{ k3s_crun_version }}-{{ k3s_arch }}
         mode: "0755"
       delegate_to: localhost
@@ -25,7 +25,7 @@
     - name: Transfer crun binary to target system
       ansible.builtin.copy:
         src: /tmp/crun-{{ k3s_crun_version }}-{{ k3s_arch }}
-        dest: /usr/local/bin/k3s
+        dest: /usr/local/bin/crun
         mode: "0755"
         owner: root
         group: root
