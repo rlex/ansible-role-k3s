@@ -33,7 +33,7 @@ k3s_gvisor_config: {}
 # https://github.com/google/gvisor/tags
 k3s_gvisor_version: 20240415
 k3s_crun: false
-#https://github.com/containers/crun/releases
+# https://github.com/containers/crun/releases
 k3s_crun_version: 1.14.4
 k3s_sysctl_config: {}
 k3s_registries: ""
