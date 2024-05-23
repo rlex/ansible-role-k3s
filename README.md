@@ -27,7 +27,7 @@ Apart from [what k3s requires](https://rancher.com/docs/k3s/latest/en/installati
 
 | Variable name                  | Default value                        | Description                                                                                                                          |
 | ------------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| k3s_version                    | `v1.29.3+k3s1`                       | version of k3s to install                                                                                                            |
+| k3s_version                    | `v1.30.1+k3s1`                       | version of k3s to install                                                                                                            |
 | k3s_systemd_dir                | /etc/systemd/system                  | Directory for systemd unit file                                                                                                      |
 | k3s_master                     | `false`                              | installs k3s master when true                                                                                                        |
 | k3s_agent                      | `false`                              | installs k3s agent when true                                                                                                         |
