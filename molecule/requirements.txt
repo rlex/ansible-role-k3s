@@ -1,3 +1,4 @@
 ansible-core
+docker
 molecule
-molecule-plugins
+molecule-plugins[docker]
