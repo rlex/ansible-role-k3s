@@ -57,6 +57,7 @@ jobs:
     name: Molecule
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - distro: ubuntu2204
@@ -73,13 +74,6 @@ jobs:
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
-        with:
-          path: 'rlex.k3s'
-
-      - name: Setup python 3
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
 
       - name: Install test dependencies.
         run: pip3 install -r molecule/requirements.txt
@@ -89,4 +83,4 @@ jobs:
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
+          MOLECULE_DISTRO: "${{ matrix.distro }}"
