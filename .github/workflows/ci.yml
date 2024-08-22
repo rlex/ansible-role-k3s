@@ -74,6 +74,8 @@ jobs:
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v4
+        with:
+          path: "rlex.k3s"
 
       - name: Install test dependencies.
         run: pip3 install -r molecule/requirements.txt
