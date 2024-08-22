@@ -62,7 +62,7 @@ jobs:
         include:
           - distro: ubuntu2204
             scenario: single-node
-          - distro: debian9
+          - distro: debian12
             scenario: single-node
           - distro: rockylinux9
             scenario: single-node
