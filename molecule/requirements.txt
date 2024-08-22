@@ -1,3 +1,4 @@
 ansible
-docker==5.1.0
-molecule-plugins
+docker
+molecule==5.1.0
+molecule-plugins==5.1.0
