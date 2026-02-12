@@ -20,14 +20,14 @@
   ansible.builtin.package:
     name: "{{ k3s_extra_packages }}"
     state: present
-  when: k3s_extra_packages
+  when: k3s_extra_packages | length > 0
 
 - name: Enable additional services
   ansible.builtin.service:
     name: "{{ item }}"
     state: started
     enabled: true
-  when: k3s_extra_services
+  when: k3s_extra_services | length > 0
   loop: "{{ k3s_extra_services }}"
 
 - name: Set additional sysctl settings
@@ -61,7 +61,7 @@
     mode: "0600"
   notify: Restart k3s
   when:
-    - k3s_registries
+    - k3s_registries | length > 0
 
 - name: Generate containerd config
   ansible.builtin.template:

@@ -1,17 +1,16 @@
 #jinja2:variable_start_string:'[[' , variable_end_string:']]' , block_start_string:'[%', block_end_string:'%]'
-#Template needs to be re-synced with each containerd update
-#Current version:
-#https://github.com/k3s-io/k3s/blob/v1.29.3%2Bk3s1/pkg/agent/templates/templates_linux.go
 
 {{ template "base" . }}
 
 [% if k3s_gvisor %]
+[plugins."io.containerd.cri.v1.images"]
+  use_local_image_pull = true
 [plugins."io.containerd.runtime.v1.linux"]
   shim_debug = true
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runsc]
   runtime_type = "io.containerd.runsc.v1"
 [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runsc.options]
-  SystemdCgroup = {{ .SystemdCgroup }}
   TypeUrl = "io.containerd.runsc.v1.options"
+  SystemdCgroup = {{ .SystemdCgroup }}
   ConfigPath = "/var/lib/rancher/k3s/agent/etc/containerd/runsc.toml"
 [% endif %]
