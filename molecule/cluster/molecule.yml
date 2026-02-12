@@ -57,6 +57,8 @@ provisioner:
   name: ansible
   options:
     diff: true
+  env:
+    ANSIBLE_ROLES_PATH: ../../../
   inventory:
     group_vars:
       k3s_master:
