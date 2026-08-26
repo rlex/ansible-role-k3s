@@ -32,11 +32,11 @@
 - name: Read node-token from master
   ansible.builtin.slurp:
     src: /var/lib/rancher/k3s/server/node-token
-  register: node_token
+  register: k3s_node_token_result
 
-- name: Store Master node-token
+- name: Store master node-token
   ansible.builtin.set_fact:
-    k3s_node_token: "{{ node_token.content | b64decode | regex_replace('\n', '') }}"
+    k3s_node_token: "{{ k3s_node_token_result.content | b64decode | regex_replace('\n', '') }}"
 
 - name: Create kubectl symlink
   ansible.builtin.file:

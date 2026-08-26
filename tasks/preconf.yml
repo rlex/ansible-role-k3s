@@ -39,7 +39,7 @@
     state: present
     reload: true
     ignoreerrors: true
-  with_dict: "{{ k3s_sysctl_config }}"
+  loop: "{{ k3s_sysctl_config | dict2items }}"
 
 - name: Pre-create k3s config folders
   ansible.builtin.file:
@@ -48,7 +48,7 @@
     group: root
     state: directory
     mode: "0600"
-  with_items:
+  loop:
     - /etc/rancher/k3s
     - /var/lib/rancher/k3s/agent/etc/containerd
 

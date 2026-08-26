@@ -2,9 +2,9 @@
 - name: Copy k3s additional config files
   ansible.builtin.template:
     src: additional-config.yaml.j2
-    dest: /etc/rancher/k3s/{{ item.name }}
+    dest: "/etc/rancher/k3s/{{ item.name }}"
     owner: root
     group: root
     mode: "0600"
   notify: Restart k3s
-  with_items: "{{ k3s_extra_config_files }}"
+  loop: "{{ k3s_extra_config_files }}"

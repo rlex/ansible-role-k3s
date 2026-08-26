@@ -6,8 +6,8 @@ k3s_arch_table:
   x86_64:
     arch: amd64
     suffix: ""
-k3s_arch: "{{ k3s_arch_table[ansible_architecture].arch }}"
-gvisor_arch: "{{ ansible_facts.architecture }}"
+k3s_arch: "{{ k3s_arch_table[ansible_facts['architecture']].arch }}"
+gvisor_arch: "{{ ansible_facts.architecture }}"  # noqa var-naming[no-role-prefix]
 
 # backwards compatibility
 k3s_additional_packages: "{{ k3s_extra_packages | default([]) }}"
@@ -15,7 +15,7 @@ k3s_additional_services: "{{ k3s_extra_services | default([]) }}"
 k3s_additional_config_files: "{{ k3s_extra_config_files | default([]) }}"
 k3s_additional_manifests: "{{ k3s_extra_manifests | default([]) }}"
 k3s_agent_additional_config: "{{ k3s_agent_extra_config | default([]) }}"
-kes_agent_additional_config: "{{ k3s_agent_extra_config | default([]) }}"
+kes_agent_additional_config: "{{ k3s_agent_extra_config | default([]) }}"  # noqa var-naming[no-role-prefix]
 k3s_kubelet_additional_config: "{{ k3s_kubelet_extra_config | default([]) }}"
 k3s_node_extra_args: "{{ k3s_agent_extra_args | default([]) }}"
 k3s_node_external_ip: "{{ k3s_external_ip | default([]) }}"
